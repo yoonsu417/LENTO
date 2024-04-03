@@ -37,10 +37,11 @@ public class MainActivity extends AppCompatActivity {
         //로그인 누르면 홈 화면으로 이동
         Button loginBt;
         loginBt = (Button)findViewById(R.id.loginBt);
-        loginBt.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){ setContentView(R.layout.activity_main);}
+        loginBt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                startActivity(intent);
+            }
         });
-
-
     }
 }
