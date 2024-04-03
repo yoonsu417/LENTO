@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         //로그인 누르면 홈 화면으로 이동
         Button loginBt;
         loginBt = (Button)findViewById(R.id.loginBt);
