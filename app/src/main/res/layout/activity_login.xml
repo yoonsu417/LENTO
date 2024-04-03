@@ -6,11 +6,20 @@
     android:orientation="vertical">
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="165dp"
+        android:layout_marginTop="80dp"
+        android:text="LENTO"
+        android:textSize="25dp"
+        android:textStyle="bold"/>
+
+    <TextView
         android:id="@+id/LoginEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="60dp"
         android:text="이메일" />
 
     <EditText
@@ -39,13 +48,14 @@
         android:layout_height="60dp"
         android:layout_marginLeft="50dp"
         android:layout_marginTop="50dp"
-        android:text="로그인" />
+        android:text="로그인"
+        android:background="#4D5C84"/>
 
     <TextView
         android:id="@+id/account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="계정이 없으신가요?"
+        android:text="@string/account"
         android:layout_marginTop="80dp"
         android:layout_marginLeft="145dp"/>
 

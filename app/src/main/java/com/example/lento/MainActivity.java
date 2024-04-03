@@ -1,5 +1,6 @@
 package com.example.lento;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -26,9 +27,12 @@ public class MainActivity extends AppCompatActivity {
         NoAccount = (TextView) findViewById(R.id.account);
         NoAccount.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                setContentView(R.layout.activity_join);
+                Intent intent = new Intent(MainActivity.this, JoinActivity.class);
+                startActivity(intent);
             }
         });
+
+
 
         //로그인 누르면 홈 화면으로 이동
         Button loginBt;
