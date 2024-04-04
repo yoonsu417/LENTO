@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,14 +24,15 @@
                 android:layout_height="wrap_content"
                 android:text="우리 함께 챌린지를 완성해볼까요?"
                 android:layout_marginLeft="150dp"
-                android:layout_marginTop="50dp"/>
+                android:layout_marginTop="50dp"
+                android:textStyle="bold"/>
 
             <ImageView
                 android:id="@+id/charater"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="40dp"
                 tools:srcCompat="@tools:sample/avatars" />
 
 
@@ -48,15 +49,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
-                android:layout_marginTop="30dp"
-                android:text="악보 업로드"/>
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:text="악보 업로드"
+                android:textStyle="bold"/>
 
             <Button
                 android:id="@+id/Upload"
                 android:layout_width="300dp"
-                android:layout_height="200dp"
+                android:layout_height="160dp"
                 android:layout_gravity="center"
-                android:text="악보 이미지"/>
+                android:text="악보 이미지" />
+
+
         /></LinearLayout>
 
         <LinearLayout
@@ -69,8 +74,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
-                android:layout_marginTop="30dp"
-                android:text="최근 연습한 곡" />
+                android:layout_marginTop="10dp"
+                android:text="최근 연습한 곡"
+                android:textStyle="bold"/>
 
             <ImageButton
                 android:id="@+id/sheetButton"
@@ -81,5 +87,45 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal"
+            android:background="@drawable/border">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="홈" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="악보" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="음악이론" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="마이" />
+
+        </LinearLayout>
+
     </LinearLayout>
-</LinearLayout>
+</FrameLayout>

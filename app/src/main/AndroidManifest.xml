@@ -23,6 +23,7 @@
         </activity>
         <activity android:name=".JoinActivity" android:label="Join 액티비티"/>
         <activity android:name=".HomeActivity" android:label="Home 액티비티"/>
+        <activity android:name=".UploadActivity" android:label="Upload 액티비티"/>
     </application>
 
 </manifest>
