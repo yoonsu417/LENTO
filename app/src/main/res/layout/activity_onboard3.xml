@@ -35,11 +35,11 @@
         android:layout_marginTop="10dp"
         android:src="@drawable/on3" />
     <ImageView
-        android:id="@+id/on11"
+        android:id="@+id/on33"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:src="@drawable/on11" />
+        android:src="@drawable/on33" />
 
     <Button
         android:id="@+id/NextBt"
