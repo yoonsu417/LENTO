@@ -27,11 +27,27 @@
         android:text="내가 원하는 악보 연주"
         android:textSize="30dp"
         android:textStyle="bold"/>
+    <ImageView
+        android:id="@+id/on1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/on1" />
+    <ImageView
+        android:id="@+id/on11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/on11" />
+
+
+
     <Button
         android:id="@+id/NextBt"
         android:layout_width="350dp"
         android:layout_height="60dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="55dp"
         android:layout_gravity="center"
         android:text="다음으로"
         android:textSize="17sp"

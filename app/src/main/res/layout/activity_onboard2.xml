@@ -1,6 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="50dp"
+        android:text="LENTO"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="38dp"
+        android:text="악보와 연주를 비교하여,"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:text="실시간 연주 정확도 진단"
+        android:textSize="30dp"
+        android:textStyle="bold"/>
+    <ImageView
+        android:id="@+id/on1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/on2" />
+    <ImageView
+        android:id="@+id/on11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/on11" />
+
+    <Button
+        android:id="@+id/NextBt"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="55dp"
+        android:layout_gravity="center"
+        android:text="다음으로"
+        android:textSize="17sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:background="@drawable/rounded_button"
+        android:radius="15dp"/>
+
+
 
 </LinearLayout>
