@@ -28,6 +28,9 @@
         <activity android:name=".JoinActivity" android:label="Join 액티비티"/>
         <activity android:name=".HomeActivity" android:label="Home 액티비티"/>
         <activity android:name=".UploadActivity" android:label="Upload 액티비티"/>
+        <activity android:name=".Onboard1Activity" android:label="Onboard1 액티비티"/>
+        <activity android:name=".Onboard2Activity" android:label="Onboard2 액티비티"/>
+        <activity android:name=".Onboard3Activity" android:label="Onboard3 액티비티"/>
     </application>
 
 </manifest>
