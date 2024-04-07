@@ -87,45 +87,13 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <include
+            android:id="@+id/bottom_home"
+            layout="@layout/bottom_home"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="horizontal"
-            android:background="@drawable/border">
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="홈" />
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="악보" />
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="음악이론" />
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="마이" />
-
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_alignParentBottom="true" />
 
     </LinearLayout>
 </FrameLayout>

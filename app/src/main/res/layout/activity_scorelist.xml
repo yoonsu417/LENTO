@@ -65,12 +65,13 @@
         android:padding="5dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
     <!-- 하단 바 -->
-    <LinearLayout
+    <include
+        android:id="@+id/bottom_score"
+        layout="@layout/bottom_score"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginBottom="0dp"
+        android:layout_alignParentBottom="true" />
 
-
-    </LinearLayout>
 
 </LinearLayout>
