@@ -105,7 +105,7 @@
             android:layout_marginLeft="50dp"
             android:layout_gravity="center_vertical"
             android:text="내 악보에 추가"
-            android:background="#4D5C84"/>
+            android:background="@drawable/rounded_button"/>
 
     </LinearLayout>
 

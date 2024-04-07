@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#4D5C84"
+            android:background="@drawable/rounded_button"
             android:orientation="vertical">
 
             <TextView
@@ -26,14 +26,6 @@
                 android:layout_marginLeft="150dp"
                 android:layout_marginTop="50dp"
                 android:textStyle="bold"/>
-
-            <ImageView
-                android:id="@+id/charater"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="40dp"
-                tools:srcCompat="@tools:sample/avatars" />
 
 
         </LinearLayout>
@@ -77,13 +69,6 @@
                 android:layout_marginTop="10dp"
                 android:text="최근 연습한 곡"
                 android:textStyle="bold"/>
-
-            <ImageButton
-                android:id="@+id/sheetButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                tools:srcCompat="@tools:sample/avatars" />
 
         </LinearLayout>
 

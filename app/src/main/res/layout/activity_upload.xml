@@ -33,7 +33,7 @@
             android:layout_height="50dp"
             android:text="다시 업로드"
             android:layout_marginLeft="40dp"
-            android:background="#D8D8D8"/>
+            android:background="@drawable/rounded_button_gray"/>
         <Button
             android:id="@+id/next"
             android:layout_width="150dp"
@@ -41,6 +41,6 @@
             android:layout_marginLeft="30dp"
             android:gravity="center"
             android:text="다음으로"
-            android:background="#4D5C84"/>
+            android:background="@drawable/rounded_button"/>
     </LinearLayout>
 </FrameLayout>
