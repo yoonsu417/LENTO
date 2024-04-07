@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/rounded_button"
+            android:background="#4D5C84"
             android:orientation="vertical">
 
             <TextView
@@ -24,8 +24,18 @@
                 android:layout_height="wrap_content"
                 android:text="우리 함께 챌린지를 완성해볼까요?"
                 android:layout_marginLeft="150dp"
-                android:layout_marginTop="50dp"
-                android:textStyle="bold"/>
+                android:layout_marginTop="30dp"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
+
+            <Button
+                android:id="@+id/showChallenge"
+                android:layout_width="290dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="100dp"
+                android:background="@drawable/rounded_button_blue"/>
 
 
         </LinearLayout>
@@ -44,14 +54,20 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
                 android:text="악보 업로드"
+                android:textColor="#3E3E3E"
+                android:textSize="15sp"
                 android:textStyle="bold"/>
 
             <Button
                 android:id="@+id/Upload"
                 android:layout_width="300dp"
                 android:layout_height="160dp"
-                android:layout_gravity="center"
-                android:text="악보 이미지" />
+                android:layout_gravity="center_horizontal"
+                android:text="악보 이미지"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:textColor="#C6C6C6"
+                android:background="@drawable/rounded_button_white"/>
 
 
         /></LinearLayout>
@@ -68,6 +84,8 @@
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="10dp"
                 android:text="최근 연습한 곡"
+                android:textSize="15sp"
+                android:textColor="#3E3E3E"
                 android:textStyle="bold"/>
 
         </LinearLayout>
