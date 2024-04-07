@@ -33,7 +33,9 @@ public class HomeActivity extends Activity {
                 intent.setType("*/*"); // 모든 파일 유형을 선택할 수 있도록 설정
                 startActivityForResult(intent, YOUR_REQUEST_CODE);
             }
+
         });
+
     }
 
 
