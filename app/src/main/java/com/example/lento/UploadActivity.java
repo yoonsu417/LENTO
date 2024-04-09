@@ -32,29 +32,8 @@ public class UploadActivity extends Activity {
         Button before = findViewById(R.id.before);
         Button after = findViewById(R.id.after);
 
+        showPdf = (ImageView)findViewById(R.id.showPdf);
         showPages = (TextView)findViewById(R.id.showPages);
-
-        //이전 페이지
-        before.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                if(display_page > 0) {
-                    display_page--;
-                    _display(display_page);
-                }
-            }
-        });
-
-        // 다음 페이지
-        after.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                if(display_page > 0) {
-                    display_page++;
-                    _display(display_page);
-                }
-            }
-        });
 
 
         String fileUriString = getIntent().getStringExtra("fileUri");
@@ -72,6 +51,29 @@ public class UploadActivity extends Activity {
         }catch (IOException e){
 
         }
+
+        //이전 페이지
+        before.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(display_page > 0) {
+                    display_page--;
+                    _display(display_page);
+                }
+            }
+        });
+
+        // 다음 페이지
+        after.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(display_page < (total_pages -1)) {
+                    display_page++;
+                    _display(display_page);
+                }
+            }
+        });
+
 
     }
 
