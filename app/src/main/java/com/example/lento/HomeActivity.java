@@ -5,39 +5,49 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 import android.widget.Button;
+
+import androidx.annotation.Nullable;
 
 
 public class HomeActivity extends Activity {
 
-    public static final int YOUR_REQUEST_CODE = 1;
+    public static final int PICK_FILE = 99;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        // 악보이미지 누르면 악보 추가
-        //로그인 누르면 홈 화면으로 이동
+        // 악보이미지 누르면 pdf 선택 화면으로 이동
         Button Upload;
 
         Upload = (Button)findViewById(R.id.Upload);
         Upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*"); // 모든 파일 유형을 선택할 수 있도록 설정
-                startActivityForResult(intent, YOUR_REQUEST_CODE);
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("application/pdf"); // pdf 파일만 선택 설정
+                startActivityForResult(intent, PICK_FILE);
             }
 
         });
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PICK_FILE && resultCode == RESULT_OK) {
+            if(data != null){
+                Uri uri = data.getData();
+                Intent intent = new Intent(HomeActivity.this, UploadActivity.class);
+                intent.putExtra("fileUri", uri.toString());
+                startActivity(intent);
+            }
+        }
+    }
 
 }
 
