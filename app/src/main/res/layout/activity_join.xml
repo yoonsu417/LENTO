@@ -24,6 +24,7 @@
             android:layout_gravity="center"
             android:text="회원가입"
             android:textSize="25dp"
+            android:textColor="#3E3E3E"
             android:textStyle="bold" />
 
     </FrameLayout>
