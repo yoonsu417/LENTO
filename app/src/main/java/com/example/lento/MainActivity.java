@@ -8,16 +8,32 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import org.opencv.android.OpenCVLoader;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "TEST_OPEN_CV_ANDROID";
+
     EditText InputEmail, InputPw;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // OpenCV 라이브러리 초기화
+        if (!OpenCVLoader.initDebug()) {
+            Log.e(TAG, "OpenCV 초기화 실패!");
+            return;
+        } else {
+            Log.d(TAG, "OpenCV 초기화 성공!!!!!");
+        }
+
 
         //이메일, 비밀번호 입력
         InputEmail = (EditText) findViewById(R.id.InputEmail);
