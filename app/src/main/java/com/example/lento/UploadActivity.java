@@ -6,10 +6,15 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,6 +27,8 @@ public class UploadActivity extends Activity {
 
     TextView showPages;
     ImageView showPdf;
+
+    private static final String TAG = "TEST_OPEN_CV_ANDROID";
 
     // 파일 받아서 activity_upload.xml에 출력
     @Override

@@ -16,3 +16,4 @@ rootProject.name = "LENTO"
 include ':app'
 include ':OpenCV'
 include ':OpenCV'
+include ':OpenCV'

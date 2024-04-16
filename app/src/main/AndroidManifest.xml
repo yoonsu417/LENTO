@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +17,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".OpenCVtestActivity"
+            android:exported="false" />
+        <activity
             android:name=".Onboard1Activity"
             android:exported="true">
             <intent-filter>
@@ -25,12 +28,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" android:label="Main(login) 액티비티" />
-        <activity android:name=".HomeActivity" android:label="Home 액티비티"/>
-        <activity android:name=".JoinActivity" android:label="Join 액티비티"/>
-        <activity android:name=".UploadActivity" android:label="Upload 액티비티"/>
-        <activity android:name=".Onboard2Activity" android:label="Onboard2 액티비티"/>
-        <activity android:name=".Onboard3Activity" android:label="Onboard3 액티비티"/>
+        <activity
+            android:name=".MainActivity"
+            android:label="Main(login) 액티비티" />
+        <activity
+            android:name=".HomeActivity"
+            android:label="Home 액티비티" />
+        <activity
+            android:name=".JoinActivity"
+            android:label="Join 액티비티" />
+        <activity
+            android:name=".UploadActivity"
+            android:label="Upload 액티비티" />
+        <activity
+            android:name=".Onboard2Activity"
+            android:label="Onboard2 액티비티" />
+        <activity
+            android:name=".Onboard3Activity"
+            android:label="Onboard3 액티비티" />
     </application>
 
 </manifest>

@@ -23,6 +23,19 @@ public class HomeActivity extends Activity {
         Button Upload;
 
         Upload = (Button)findViewById(R.id.Upload);
+
+        // 악보인식 테스트용 버튼
+        Button test;
+        test = (Button)findViewById(R.id.OpenCVtest);
+
+        test.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this,OpenCVtestActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
         Upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
