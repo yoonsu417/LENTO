@@ -37,6 +37,12 @@
                 android:layout_marginLeft="100dp"
                 android:background="@drawable/rounded_button_blue"/>
 
+            <Button
+                android:id="@+id/OpenCVtest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OpenCV Test" />
+
 
         </LinearLayout>
 
@@ -67,40 +73,34 @@
                 android:textStyle="bold"
                 android:textSize="17sp"
                 android:textColor="#C6C6C6"
+                android:drawableBottom="@drawable/plusadd"
                 android:background="@drawable/rounded_button_white"/>
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/plus"
-                android:layout_gravity="center"
-                android:contentDescription="plus_icon"/>
 
 
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="20dp"
+            android:text="최근 연습한 곡"
+            android:textSize="15sp"
+            android:textColor="#3E3E3E"
+            android:textStyle="bold"/>
+
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_marginTop="10dp"
-                android:text="최근 연습한 곡"
-                android:textSize="15sp"
-                android:textColor="#3E3E3E"
-                android:textStyle="bold"/>
+            <ImageView
+                android:id="@+id/practiceImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
 
-            <Button
-                android:id="@+id/OpenCVtest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="OpenCV Test" />
 
-        </LinearLayout>
+        </HorizontalScrollView>
 
         <include
             android:id="@+id/bottom_home"
