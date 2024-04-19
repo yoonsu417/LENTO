@@ -41,6 +41,9 @@
             android:name=".UploadActivity"
             android:label="Upload 액티비티" />
         <activity
+            android:name=".AddInfoActivity"
+            android:label="AddInfo 액티비티"/>
+        <activity
             android:name=".Onboard2Activity"
             android:label="Onboard2 액티비티" />
         <activity

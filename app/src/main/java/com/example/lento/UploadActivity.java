@@ -1,6 +1,7 @@
 package com.example.lento;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
@@ -27,6 +28,8 @@ public class UploadActivity extends Activity {
 
     TextView showPages;
     ImageView showPdf;
+
+    Button next;
 
     private static final String TAG = "TEST_OPEN_CV_ANDROID";
 
@@ -81,6 +84,15 @@ public class UploadActivity extends Activity {
             }
         });
 
+        // 다음으로 누르면 정보 입력 페이지 이동
+        next = (Button)findViewById(R.id.next);
+        next.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent nextIntent = new Intent(UploadActivity.this, AddInfoActivity.class);
+                nextIntent.putExtra("fileUri", fileUri.toString());
+                startActivity(nextIntent);
+            }
+        });
 
     }
 
