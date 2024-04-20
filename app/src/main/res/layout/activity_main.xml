@@ -1,48 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#4D5C84"
+            android:layout_height="wrap_content"
+            android:background="#687AAC"
             android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="하늘님,"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="20dp"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="우리 함께 챌린지를 완성해볼까요?"
-                android:layout_marginLeft="130dp"
-                android:layout_marginTop="30dp"
-                android:textSize="15sp"
-                android:textStyle="bold"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="3dp"
+                android:textSize="20sp"
                 android:textColor="#FFFFFF"/>
 
-            <Button
-                android:id="@+id/showChallenge"
-                android:layout_width="290dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="100dp"
-                android:background="@drawable/rounded_button_blue"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/OpenCVtest"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/challback"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/chall" />
+                <TextView
+                    android:id="@+id/challtype"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="완곡목표"
+                    android:layout_marginStart="55dp"
+                    android:layout_marginTop="30dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="14dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/rounded_button_white_opacity"/>
+                <ImageView
+                    android:id="@+id/challtimeline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/challtype"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="130dp"
+                    android:src="@drawable/challtime"
+                    android:layout_alignTop="@id/challtype"/>
+
+                <TextView
+                    android:id="@+id/challgoal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/challtype"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="55dp"
+                    android:layout_marginTop="60dp"
+                    android:text="Spring Time 완곡"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="21sp" />
+                <TextView
+                    android:id="@+id/challstime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2024.04.01"
+                    android:layout_toEndOf="@id/challtimeline"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_alignTop="@id/challtype"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp"/>
+                <TextView
+                    android:id="@+id/challtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="주 3회"
+                    android:layout_toEndOf="@id/challtimeline"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_alignTop="@id/challtype"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp"/>
+                <TextView
+                    android:id="@+id/challftime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2024.05.01"
+                    android:layout_toEndOf="@id/challtimeline"
+                    android:layout_marginTop="60dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_alignTop="@id/challtype"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp"/>
+
+                <ImageView
+                    android:id="@+id/challcharacter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="90dp"
+                    android:layout_marginTop="105dp"
+                    android:src="@drawable/challch1" />
+            </RelativeLayout>
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="OpenCV Test" />
-
+                android:layout_alignBottom="@+id/challback"
+                android:layout_marginBottom="0dp"
+                android:max="100"
+                android:progress="0" />
 
         </LinearLayout>
 
@@ -57,23 +152,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:text="악보 업로드"
                 android:textColor="#3E3E3E"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 android:textStyle="bold"/>
 
             <Button
                 android:id="@+id/Upload"
                 android:layout_width="300dp"
                 android:layout_height="160dp"
+                android:layout_marginTop="10dp"
                 android:layout_gravity="center_horizontal"
                 android:text="악보 이미지"
                 android:textStyle="bold"
-                android:textSize="17sp"
+                android:textSize="19sp"
                 android:textColor="#C6C6C6"
-                android:drawableBottom="@drawable/plusadd"
+                android:drawableBottom="@drawable/plusadd1"
                 android:background="@drawable/rounded_button_white"/>
 
 
@@ -83,9 +179,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:text="최근 연습한 곡"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textColor="#3E3E3E"
             android:textStyle="bold"/>
 
@@ -101,14 +197,18 @@
 
 
         </HorizontalScrollView>
-
-        <include
-            android:id="@+id/bottom_home"
-            layout="@layout/bottom_home"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/OpenCVtest"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_alignParentBottom="true" />
-
+            android:text="OpenCV Test" />
     </LinearLayout>
-</FrameLayout>
+    </ScrollView>
+    <include
+        android:id="@+id/bottom_home"
+        layout="@layout/bottom_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>
