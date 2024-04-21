@@ -24,9 +24,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="하늘님,"
+                android:fontFamily="@font/suite_bold"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="20dp"
-                android:textSize="25sp"
+                android:textSize="27dp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"/>
 
@@ -34,6 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="우리 함께 챌린지를 완성해볼까요?"
+                android:fontFamily="@font/suite_medium"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="3dp"
                 android:textSize="20sp"
@@ -56,6 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="완곡목표"
+                    android:fontFamily="@font/suite_medium"
                     android:layout_marginStart="55dp"
                     android:layout_marginTop="30dp"
                     android:textColor="@android:color/white"
