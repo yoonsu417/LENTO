@@ -44,11 +44,7 @@ public class HomeActivity extends Activity {
                 intent.setType("application/pdf"); // pdf 파일만 선택 설정
                 startActivityForResult(intent, PICK_FILE);
             }
-
         });
-
-
-
     }
 
     @Override
@@ -63,6 +59,5 @@ public class HomeActivity extends Activity {
             }
         }
     }
-
 }
 

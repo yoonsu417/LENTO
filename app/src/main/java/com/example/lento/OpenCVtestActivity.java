@@ -30,6 +30,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_cvtest);
 
+
         // OpenCV 라이브러리 초기화
         if (!OpenCVLoader.initDebug()) {
             Log.e(TAG, "OpenCV 초기화 실패!");
@@ -44,7 +45,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
         // Mat 객체 불러오기 : JPG -> Mat
         Mat image = null;
         try {
-            image = Utils.loadResource(getApplicationContext(), R.drawable.summer);
+            image = Utils.loadResource(getApplicationContext(), R.drawable.sheet);
         } catch (Exception e) {
             Log.e(TAG, "이미지를 읽을 수 없습니다: " + e.getMessage());
             e.printStackTrace();
@@ -55,9 +56,11 @@ public class OpenCVtestActivity extends AppCompatActivity {
             return;
         }
 
+
         // 그레이 스케일
         Mat grayImage = new Mat();
         Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
+
 
         // 이진화
         Mat binaryImage = new Mat();
@@ -66,6 +69,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(binaryImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
 
         // 보표로 추정되는 영역을 표시할 이미지 생성
         Mat extractedImage = Mat.zeros(binaryImage.size(), binaryImage.type());
@@ -83,8 +87,12 @@ public class OpenCVtestActivity extends AppCompatActivity {
         // 추출된 보표 영역만을 남기고 나머지 부분을 검정색으로 만듬
         Core.bitwise_and(binaryImage, extractedImage, binaryImage);
 
+
         // 오선 제거
         removeStaves(binaryImage);
+
+
+
 
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
@@ -93,6 +101,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
         // 비트맵 이미지 화면 출력
         OpenCVtest.setImageBitmap(Bitmapimage);
+
 
     }
 
@@ -131,8 +140,10 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 }
             }
         }
-
         return image;
     }
+
+
+
 
 }

@@ -9,6 +9,14 @@
         android:layout_height="150dp"
         android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/back_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/main"
+            android:text="Back"
+            android:textColor="@color/white" />
+
         <ImageView
             android:id="@+id/back"
             android:layout_width="20dp"

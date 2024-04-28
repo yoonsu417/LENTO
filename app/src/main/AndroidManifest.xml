@@ -15,9 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LENTO"
         android:usesCleartextTraffic="true"
+        android:name=".CurrentUser"
         tools:targetApi="31">
         <activity
-            android:name=".HomeActivity"
+            android:name=".Onboard1Activity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,8 +39,8 @@
             android:name=".AddInfoActivity"
             android:label="AddInfo 액티비티"/>
         <activity
-            android:name=".Onboard1Activity"
-            android:label="Onboard1 액티비티"/>
+            android:name=".HomeActivity"
+            android:label="Home 액티비티"/>
         <activity
             android:name=".Onboard2Activity"
             android:label="Onboard2 액티비티" />

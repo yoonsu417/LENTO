@@ -94,7 +94,7 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/inputName"
+            android:id="@+id/inputTitle"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
