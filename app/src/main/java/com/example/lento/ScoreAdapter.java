@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfRenderer;
 import android.os.ParcelFileDescriptor;
 import android.transition.Transition;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,12 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
         holder.sheetTitle.setText(score.getTitle());
         holder.sheetComposer.setText(score.getComposer());
 
+        /*// Glide를 사용하여 이미지 URL에서 이미지를 로드하고 ImageView에 설정합니다.
+        Glide.with(context)
+                .load(score.getImagePath())
+                .placeholder(R.drawable.scorelisttmp) // 이미지 로드 중에 보여줄 임시 이미지
+                .error(R.drawable.scorelisttmp) // 이미지 로드 실패 시 보여줄 이미지
+                .into(holder.sheetImage);*/
         // PDF 파일을 비트맵으로 변환하여 이미지뷰에 설정
         try {
             File file = new File(score.getImagePath());
@@ -60,7 +67,10 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
             }
         } catch (Exception e) {
             e.printStackTrace();
+            // 이미지 로드 실패 시, placeholder 이미지 설정
+            holder.sheetImage.setImageResource(R.drawable.scorelisttmp);
         }
+
     }
 
     @Override

@@ -72,7 +72,6 @@
         </RelativeLayout>
     </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginLeft="45dp"
         android:layout_marginTop="20dp"
         android:paddingHorizontal="10dp"
         android:clipToPadding="true"
@@ -81,7 +80,8 @@
         android:id="@+id/recyclerGridView"
         tools:listitem="@layout/item_score"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="3" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
         </LinearLayout>
     </ScrollView>
     <!-- 하단 바 -->
