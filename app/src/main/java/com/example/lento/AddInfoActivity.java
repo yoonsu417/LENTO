@@ -107,7 +107,7 @@ public class AddInfoActivity extends Activity {
                     Toast.makeText(getApplicationContext(), "악보 등록이 완료되었습니다.", Toast.LENGTH_SHORT).show();
 
                     // 화면 전환
-                    Intent intent = new Intent(AddInfoActivity.this, HomeActivity.class);
+                    Intent intent = new Intent(AddInfoActivity.this, ScorelistActivity.class);
                     startActivity(intent);
                 }
             }

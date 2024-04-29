@@ -22,7 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:onClick="onHomeClicked">
 
             <ImageView
                 android:id="@+id/myicon"
@@ -72,7 +73,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:onClick="onTheoryClicked">
 
             <ImageView
                 android:layout_width="32dp"
@@ -94,7 +96,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:onClick="onMypageClicked">
 
             <ImageView
                 android:layout_width="32dp"

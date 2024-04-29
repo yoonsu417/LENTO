@@ -17,11 +17,13 @@
         android:backgroundTint="@color/white">
 
         <LinearLayout
+            android:id="@+id/home"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:onClick="onHomeClicked">
 
             <ImageView
                 android:id="@+id/myicon"
@@ -46,7 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:onClick="onSheetClicked">
 
             <ImageView
                 android:id="@+id/searchicon"
@@ -68,11 +71,13 @@
 
 
         <LinearLayout
+            android:id="@+id/theory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:onClick="onTheoryClicked">
 
             <ImageView
                 android:layout_width="32dp"
@@ -90,11 +95,13 @@
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/mypage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:onClick="onMypageClicked">
 
             <ImageView
                 android:layout_width="32dp"

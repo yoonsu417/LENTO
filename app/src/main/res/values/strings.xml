@@ -3,4 +3,9 @@
     <string name="account"><u>계정이 없으신가요?</u></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="score_array">
+        <item>최근 업로드 순</item>
+        <item>최근 연습 순</item>
+        <item>제목 순</item>
+    </string-array>
 </resources>

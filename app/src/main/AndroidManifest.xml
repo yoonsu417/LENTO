@@ -27,6 +27,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ScorelistActivity"
+            android:label="Scorelist 액티비티"/>
+        <activity
             android:name=".MainActivity"
             android:label="Main(login) 액티비티" />
         <activity
@@ -50,6 +53,7 @@
         <activity
             android:name=".OpenCVtestActivity"
             android:label="OpenCVtestActicity"/>
+
     </application>
 
 </manifest>

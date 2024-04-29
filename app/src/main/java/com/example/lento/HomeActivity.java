@@ -19,6 +19,7 @@ public class HomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // 악보이미지 누르면 pdf 선택 화면으로 이동
         Button Upload;
 
@@ -45,6 +46,8 @@ public class HomeActivity extends Activity {
                 startActivityForResult(intent, PICK_FILE);
             }
         });
+
+
     }
 
     @Override
@@ -58,6 +61,12 @@ public class HomeActivity extends Activity {
                 startActivity(intent);
             }
         }
+    }
+    // 홈 클릭 시 실행되는 메서드
+    public void onSheetClicked(View view) {
+        // 홈 화면으로 이동하는 코드를 작성합니다.
+        Intent intent = new Intent(this, ScorelistActivity.class);
+        startActivity(intent);
     }
 }
 
