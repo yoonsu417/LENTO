@@ -1,21 +1,28 @@
 package com.example.lento;
 
+import static com.example.lento.Modules.normalization;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Pair;
 import android.widget.ImageView;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.opencv.android.Utils;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Core;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.android.OpenCVLoader;
 
@@ -24,13 +31,12 @@ import android.view.View;
 public class OpenCVtestActivity extends AppCompatActivity {
     private static final String TAG = "TEST_OPEN_CV_ANDROID";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_cvtest);
 
-
+        /*
         // OpenCV 라이브러리 초기화
         if (!OpenCVLoader.initDebug()) {
             Log.e(TAG, "OpenCV 초기화 실패!");
@@ -38,6 +44,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "OpenCV 초기화 성공!!!!!");
         }
+        */
 
         ImageView OpenCVtest;
         OpenCVtest = findViewById(R.id.OpenCVtest);
@@ -87,26 +94,42 @@ public class OpenCVtestActivity extends AppCompatActivity {
         // 추출된 보표 영역만을 남기고 나머지 부분을 검정색으로 만듬
         Core.bitwise_and(binaryImage, extractedImage, binaryImage);
 
-
         // 오선 제거
-        removeStaves(binaryImage);
+        Modules remove = new Modules();
+        Pair<Mat, List<int[]>> result = remove.removeStaves(binaryImage);
+        Mat imageWithoutStaves = result.first;
+        List<int[]> stavesInfo = result.second;
 
+        for (int[] stave : stavesInfo) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
+            System.out.println(Arrays.toString(stave));
+        }
 
+        // 정규화
+        Modules normal = new Modules();
+        Pair<Mat, List<int[]>> normalizedResult = normal.normalization(imageWithoutStaves, stavesInfo, 10); // 오선 간격 10 픽셀
+        Mat normalizedImage = normalizedResult.first;
+        List<int[]> normalizedStaves = normalizedResult.second;
 
+        for (int[] stave : normalizedStaves) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
+            System.out.println(Arrays.toString(stave));
+        }
+
+        // 정규화 2
 
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
-        Bitmapimage = Bitmap.createBitmap(binaryImage.cols(), binaryImage.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(binaryImage, Bitmapimage);
+        Bitmapimage = Bitmap.createBitmap(normalizedImage.cols(), normalizedImage.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(normalizedImage, Bitmapimage);
 
         // 비트맵 이미지 화면 출력
         OpenCVtest.setImageBitmap(Bitmapimage);
 
 
+
     }
 
     // 수평 히스토그램을 사용하여 오선을 삭제하는 메서드
-    public static Mat removeStaves(Mat image) {
+    public static Pair<Mat, List<int[]>> removeStaves(Mat image) {
         int height = image.rows();
         int width = image.cols();
         List<int[]> staves = new ArrayList<>();
@@ -140,10 +163,75 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 }
             }
         }
-        return image;
+        return new Pair<>(image,staves);
     }
 
 
+    // 객체 검출
+/*
+    public static Pair<Mat, List<Pair<Integer, Rect>>> objectDetection(Mat image, List<Integer> staves) {
+        int lines = (int) Math.ceil(staves.size() / 5.0);
+        List<Pair<Integer, Rect>> objects = new ArrayList<>();
 
+        Mat closingImage = new Mat();
+        Imgproc.morphologyEx(image, closingImage, Imgproc.MORPH_CLOSE, new Mat());
+        Mat labels = new Mat();
+        Mat stats = new Mat();
+        Mat centroids = new Mat();
+        int cnt = Imgproc.connectedComponentsWithStats(closingImage, labels, stats, centroids);
+
+        // 모든 객체 검출
+        for (int i = 1; i < cnt; i++) {
+            double x = stats.get(i, 0)[0];
+            double y = stats.get(i, 1)[0];
+            double w = stats.get(i, 2)[0];
+            double h = stats.get(i, 3)[0];
+            double area = stats.get(i, 4)[0];
+
+            if (w >= getWeighted(5) && h >= getWeighted(5)) {
+                double center = getCenter(y, h);
+                for (int line = 0; line < lines; line++) {
+                    double areaTop = staves.get(line * 5) - getWeighted(20);
+                    double areaBot = staves.get((line + 1) * 5 - 1) + getWeighted(20);
+
+                    if (areaTop <= center && center <= areaBot) {
+                        objects.add(new Pair<>(line, new Rect((int) x, (int) y, (int) w, (int) h)));
+                    }
+                }
+            }
+        }
+
+        Collections.sort(objects, (a, b) -> a.getFirst().compareTo(b.getFirst()));
+
+        return new Pair<>(image, objects);
+    }
+
+    private static double getWeighted(int value) {
+        int standard = 10;
+        return (int)(value * (standard / 10));
+    }
+
+    private static double getCenter(double y, double h) {
+        return y + y + h / 2;
+    }
+
+    private static class Pair<T, U> {
+        private T first;
+        private U second;
+
+        public Pair(T first, U second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        public T getFirst() {
+            return first;
+        }
+
+        public U getSecond() {
+            return second;
+        }
+    }
+ */
 
 }

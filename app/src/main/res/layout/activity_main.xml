@@ -147,8 +147,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/UploadTv"
@@ -160,20 +160,20 @@
                 android:text="악보 업로드"
                 android:textColor="#3E3E3E"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/Upload"
                 android:layout_width="300dp"
                 android:layout_height="160dp"
-                android:layout_marginTop="10dp"
                 android:layout_gravity="center_horizontal"
-                android:text="악보 이미지"
-                android:textStyle="bold"
-                android:textSize="19sp"
-                android:textColor="#C6C6C6"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/rounded_button_white"
                 android:drawableBottom="@drawable/plusadd1"
-                android:background="@drawable/rounded_button_white"/>
+                android:text="악보 이미지"
+                android:textColor="#C6C6C6"
+                android:textSize="19sp"
+                android:textStyle="bold" />
 
 
         </LinearLayout>
