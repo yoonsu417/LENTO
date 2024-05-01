@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
@@ -116,6 +117,27 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
         // 정규화 2
 
+        // 객체검출 : 수정중
+        /*
+        List<int[]> testStaves = normalizedResult.second;
+        List<Integer> streamStaves = new ArrayList<>();
+        for(int i = 0; i < normalizedStaves.size(); i++) {
+            streamStaves.add(normalizedStaves.stream().mapToInt(i));
+                    //= normalizedStaves.stream().mapToInt(i -> i).toArray();
+            //streamStaves = normalizedStaves.get(i);
+        }
+
+        Pair<Mat, List<dPair<Integer, Rect>>> odResult = objectDetection(imageWithoutStaves, normalizedStaves);
+        Mat odImage = odResult.first;
+        //List<dPair<Integer, Rect>> odStaves = odResult.second;
+
+
+
+         */
+
+
+
+
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
         Bitmapimage = Bitmap.createBitmap(normalizedImage.cols(), normalizedImage.rows(), Bitmap.Config.ARGB_8888);
@@ -167,11 +189,12 @@ public class OpenCVtestActivity extends AppCompatActivity {
     }
 
 
+
+    /*
     // 객체 검출
-/*
-    public static Pair<Mat, List<Pair<Integer, Rect>>> objectDetection(Mat image, List<Integer> staves) {
+    public static Pair<Mat, List<dPair<Integer, Rect>>> objectDetection(Mat image, List<int[]> staves) {
         int lines = (int) Math.ceil(staves.size() / 5.0);
-        List<Pair<Integer, Rect>> objects = new ArrayList<>();
+        List<dPair<Integer, Rect>> objects = new ArrayList<>();
 
         Mat closingImage = new Mat();
         Imgproc.morphologyEx(image, closingImage, Imgproc.MORPH_CLOSE, new Mat());
@@ -195,7 +218,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
                     double areaBot = staves.get((line + 1) * 5 - 1) + getWeighted(20);
 
                     if (areaTop <= center && center <= areaBot) {
-                        objects.add(new Pair<>(line, new Rect((int) x, (int) y, (int) w, (int) h)));
+                        objects.add(new dPair<>(line, new Rect((int) x, (int) y, (int) w, (int) h)));
                     }
                 }
             }
@@ -203,8 +226,10 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
         Collections.sort(objects, (a, b) -> a.getFirst().compareTo(b.getFirst()));
 
+
         return new Pair<>(image, objects);
     }
+
 
     private static double getWeighted(int value) {
         int standard = 10;
@@ -215,11 +240,13 @@ public class OpenCVtestActivity extends AppCompatActivity {
         return y + y + h / 2;
     }
 
-    private static class Pair<T, U> {
+
+    // *세정* Pair -> dPair : 기존 Util 라이브러리의 Pair과의 오버라이딩 문제로 클래스 이름 변경했습니다.
+    private static class dPair<T, U> {
         private T first;
         private U second;
 
-        public Pair(T first, U second) {
+        public dPair(T first, U second) {
             this.first = first;
             this.second = second;
         }
@@ -232,6 +259,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
             return second;
         }
     }
- */
 
+
+     */
 }

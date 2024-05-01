@@ -57,7 +57,7 @@ public class JoinActivity extends Activity {
                         // DB write 전환, INSERT 쿼리
                         db = helper.getWritableDatabase();
                         db.execSQL("INSERT INTO USER VALUES ('" +
-                                set_email + "', '" + set_name +"', '" + set_pw+ "' , 0, 0);");
+                                set_email + "', '" + set_name +"', '" + set_pw+ "' , 0);");
                         emailCheckCS.close();
                         db.close();
                         // 완료 토스트 메시지

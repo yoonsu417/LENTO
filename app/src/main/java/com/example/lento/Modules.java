@@ -10,6 +10,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Modules {
@@ -121,5 +122,6 @@ public class Modules {
 
         return new Pair<>(resizedImage, normalizedStaves);
     }
+
 
 }

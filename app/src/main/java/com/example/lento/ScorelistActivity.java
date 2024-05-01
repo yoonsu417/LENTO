@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScorelistActivity extends AppCompatActivity {
@@ -28,6 +30,10 @@ public class ScorelistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scorelist);
 
+        // 유저 확인
+        CurrentUser Currentuser = (CurrentUser)getApplicationContext();
+        String user = Currentuser.getCurrentUser();
+
         //스피너
         ArrayAdapter<CharSequence> adapter =ArrayAdapter.createFromResource(this, R.array.score_array, android.R.layout.simple_dropdown_item_1line);
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -41,7 +47,7 @@ public class ScorelistActivity extends AppCompatActivity {
         SQLiteHelper helper = new SQLiteHelper(this);
         db = helper.getReadableDatabase();
         // 악보 개수 가져와서 표시
-        int sheetMusicCount = getSheetMusicCount();
+        int sheetMusicCount = getSheetMusicCount(user);
         textViewSheetMusicCount.setText(String.valueOf(sheetMusicCount));
 
         // RecyclerView 설정
@@ -55,14 +61,19 @@ public class ScorelistActivity extends AppCompatActivity {
     }
     public void onClick(View v){
     }
-    private int getSheetMusicCount() {
-        String countQuery = "SELECT COUNT(*) FROM SHEET";
+    private int getSheetMusicCount(String user) {
+        // 유저 확인
+        CurrentUser Currentuser = (CurrentUser)getApplicationContext();
+        user = Currentuser.getCurrentUser();
+
+        String countQuery = "SELECT COUNT(*) FROM SHEET WHERE UPLOAD_USER = '" + user + "';";
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.moveToFirst();
         int count = cursor.getInt(0);
         cursor.close();
         return count;
     }
+
     private void setupRecyclerView() {
         // SQLiteHelper 객체 생성
         SQLiteHelper dbHelper = new SQLiteHelper(this);

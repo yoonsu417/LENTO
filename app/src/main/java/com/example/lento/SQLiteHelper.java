@@ -22,19 +22,18 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-
     public void onCreate(SQLiteDatabase db) {
         // 사용자 DB
         db.execSQL("CREATE TABLE IF NOT EXISTS USER (" +
                 "EMAIL TEXT NOT NULL PRIMARY KEY," +
                 "NAME TEXT NOT NULL," +
                 "PW TEXT NOT NULL," +
-                "TOTAL_SHEET INT DEFAULT 0," +
+                //"TOTAL_SHEET INT DEFAULT 0," +    // COUNT 함수 사용해 삭제
                 "TOTAL_PRACTICE INT DEFAULT 0);");
 
         // ***테스트용으로 추가한 사용자 DB 칼럼*** 추후 삭제 예정
         db.execSQL("INSERT INTO USER VALUES (" +
-                "'asdf123', " + "'asdf', " + "'123', 0, 0);");
+                "'asdf123', " + "'asdf', " + "'123', 0);");
 
         // 악보 DB
         db.execSQL("CREATE TABLE IF NOT EXISTS SHEET (" +
@@ -70,9 +69,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "PRIMARY KEY (SHEET_TITLE, PRACTICE_DATE)," +
                 "FOREIGN KEY (SHEET_TITLE) REFERENCES SHEET (SHEET_TITLE)" +
                 "ON UPDATE CASCADE ON DELETE CASCADE);");
-
-
-
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -80,6 +76,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(DELETE_TABLE_ALL);
         onCreate(db);
     }
+
+    // SQLiteHelper가 설계 페이지라 여기에 함수를 정의하면 안될거같아서... 이거 ScorelistActivity.java 파일로 옮겨야할거같아요 !
+
     public List<Score> getScores() {
         List<Score> scoreList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
