@@ -81,9 +81,12 @@ public class ScoreDetailActivity extends AppCompatActivity{
             TextView sheetPage = findViewById(R.id.pages);
             TextView sheetGenre = findViewById(R.id.genre);
             TextView sheetUploadDate = findViewById(R.id.uploaddate);
+
             // 악보 페이지 수, 장르, 업로드 날짜 가져오기
-            SQLiteHelper dbHelper = new SQLiteHelper(this);
-            ScoreDetails scoreDetails = dbHelper.getScoreDetails(title, composer);
+            DBManager dbManager = new DBManager(this);
+            ScoreDetails scoreDetails = dbManager.getScoreDetails(title, composer);
+            //SQLiteHelper dbHelper = new SQLiteHelper(this);
+            //ScoreDetails scoreDetails = dbHelper.getScoreDetails(title, composer);
 
             // 데이터 설정
             sheetTitle.setText(title);

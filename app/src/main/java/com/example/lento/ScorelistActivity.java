@@ -76,10 +76,12 @@ public class ScorelistActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         // SQLiteHelper 객체 생성
-        SQLiteHelper dbHelper = new SQLiteHelper(this);
+        DBManager dbManager = new DBManager(this);
+        //SQLiteHelper dbHelper = new SQLiteHelper(this);
 
         // 악보 데이터 가져오기
-        List<Score> scoreList = dbHelper.getScores();
+        List<Score> scoreList = dbManager.getScores();
+        //List<Score> scoreList = dbHelper.getScores();
 
         // Adapter 설정
         adapter = new ScoreAdapter(this, scoreList);
