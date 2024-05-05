@@ -4,7 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -15,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:text="악보 추가"
             android:textSize="25dp"
             android:textStyle="bold" />
@@ -25,7 +32,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="0dp"
         android:orientation="vertical">
 
         <ImageView
@@ -39,7 +46,7 @@
     <LinearLayout
         android:layout_width="350dp"
         android:layout_height="300dp"
-        android:layout_marginTop="400dp"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
         android:background="#E8E8E8">
@@ -181,22 +188,24 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:layout_marginTop="700dp">
+        android:layout_height="120dp"
+        android:layout_marginTop="0dp">
 
         <Button
             android:id="@+id/addsheet"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginLeft="50dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="1dp"
             android:layout_gravity="center_vertical"
             android:text="내 악보에 추가"
+            android:textColor="@color/white"
             android:textStyle="bold"
             android:background="@drawable/rounded_button"/>
 
     </LinearLayout>
 
-
+    </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

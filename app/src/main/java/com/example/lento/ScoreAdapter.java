@@ -1,10 +1,14 @@
 package com.example.lento;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfRenderer;
+import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,34 +46,57 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
         holder.sheetTitle.setText(score.getTitle());
         holder.sheetComposer.setText(score.getComposer());
 
-        /*// Glide를 사용하여 이미지 URL에서 이미지를 로드하고 ImageView에 설정합니다.
-        Glide.with(context)
-                .load(score.getImagePath())
-                .placeholder(R.drawable.scorelisttmp) // 이미지 로드 중에 보여줄 임시 이미지
-                .error(R.drawable.scorelisttmp) // 이미지 로드 실패 시 보여줄 이미지
-                .into(holder.sheetImage);*/
+        // PDF 파일을 비트맵으로 변환하여 이미지뷰에 설정 -> 이건 ok
+        Log.d("PDF_LOAD", "PDF 파일 경로: " + score.getImagePath());
+
         // PDF 파일을 비트맵으로 변환하여 이미지뷰에 설정
         try {
-            File file = new File(score.getImagePath());
-            ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-            if (parcelFileDescriptor != null) {
-                PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
-                if (renderer.getPageCount() > 0) {
-                    PdfRenderer.Page page = renderer.openPage(0);
-                    Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
-                    bitmap.eraseColor(Color.WHITE); // 비트맵을 흰색으로 초기화
-                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-                    holder.sheetImage.setImageBitmap(bitmap);
-                    page.close();
+            String pdfUriString = score.getImagePath();
+            Uri pdfUri = Uri.parse(pdfUriString);
+            String filePath = getRealPathFromURI(pdfUri); // URI를 실제 파일 경로로 변환
+            if (filePath != null) {
+                File file = new File(filePath);
+                ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+                if (parcelFileDescriptor != null) {
+                    PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
+                    if (renderer.getPageCount() > 0) {
+                        PdfRenderer.Page page = renderer.openPage(0);
+                        Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+                        bitmap.eraseColor(Color.WHITE); // 비트맵을 흰색으로 초기화
+                        page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+                        // 비트맵 출력
+                        Log.d("BitmapInfo", "Bitmap size: " + bitmap.getWidth() + " x " + bitmap.getHeight());
+                        holder.sheetImage.setImageBitmap(bitmap);
+                        page.close();
+                    } else {
+                        Log.e("PDF_LOAD", "PDF 파일의 페이지 수가 0입니다.");
+                    }
+                    renderer.close();
+                    parcelFileDescriptor.close();
+                } else {
+                    Log.e("PDF_LOAD", "ParcelFileDescriptor가 null입니다.");
                 }
-                renderer.close();
-                parcelFileDescriptor.close();
+            } else {
+                Log.e("PDF_LOAD", "파일 경로가 null입니다.");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e("PDF_LOAD", "PDF 파일을 로드하는 동안 오류가 발생했습니다: " + e.getMessage());
             // 이미지 로드 실패 시, placeholder 이미지 설정
             holder.sheetImage.setImageResource(R.drawable.scorelisttmp);
         }
+
+        // 각 아이템을 클릭할 때 상세 페이지로 이동
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ScoreDetailActivity.class);
+                intent.putExtra("title", score.getTitle());
+                intent.putExtra("composer", score.getComposer());
+                intent.putExtra("imagePath", score.getImagePath());
+                context.startActivity(intent);
+            }
+        });
 
     }
 
@@ -89,5 +116,26 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
             sheetComposer = itemView.findViewById(R.id.sheet_composer);
             sheetImage = itemView.findViewById(R.id.sheet_image);
         }
+    }
+    // content URI를 실제 파일 경로로 변환하는 메서드
+    private String getRealPathFromURI(Uri uri) {
+        String filePath = null;
+        if (uri == null) {
+            return null;
+        }
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                    filePath = cursor.getString(index);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (uri.getScheme().equals("file")) {
+            filePath = uri.getPath();
+        }
+        return filePath;
     }
 }

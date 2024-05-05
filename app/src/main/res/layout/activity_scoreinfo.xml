@@ -25,17 +25,19 @@
                 android:id="@+id/star"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/starfill"
+                android:src="@drawable/starstroke"
                 android:layout_marginTop="30dp"
                 android:layout_marginLeft="350dp" />
 
         </FrameLayout>
         <ImageView
+            android:id="@+id/simage"
             android:layout_width="202dp"
             android:layout_height="248dp"
             android:src="@drawable/springtime"
             android:layout_gravity="center"/>
         <TextView
+            android:id="@+id/stitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Spring Time"
@@ -45,6 +47,7 @@
             android:textColor="#323232"
             android:layout_gravity="center"/>
         <TextView
+            android:id="@+id/scomposer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="이루마"
@@ -82,6 +85,7 @@
                 android:layout_gravity="center"
                 />
             <TextView
+                android:id="@+id/pages"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2 페이지"
@@ -114,6 +118,7 @@
                 android:layout_gravity="center"
                 />
             <TextView
+                android:id="@+id/genre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="뉴에이지"
@@ -146,6 +151,7 @@
                 android:layout_gravity="center"
                 />
             <TextView
+                android:id="@+id/uploaddate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2024.04.02"

@@ -121,6 +121,47 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         return scoreList;
     }
+    // 악보의 페이지 수, 장르, 업로드 날짜를 가져오는 메서드 추가
+    public ScoreDetails getScoreDetails(String title, String composer) {
+        ScoreDetails scoreDetails = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                "PAGE",
+                "GENRE",
+                "UPLOAD_DATE"
+        };
+
+        String selection = "SHEET_TITLE = ? AND COMPOSER = ?";
+        String[] selectionArgs = {title, composer};
+
+        Cursor cursor = db.query(
+                "SHEET",
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int page = cursor.getInt(cursor.getColumnIndexOrThrow("PAGE"));
+            String genre = cursor.getString(cursor.getColumnIndexOrThrow("GENRE"));
+            String uploadDate = cursor.getString(cursor.getColumnIndexOrThrow("UPLOAD_DATE"));
+
+            // 가져온 데이터로 ScoreDetails 객체 생성
+            scoreDetails = new ScoreDetails(page, genre, uploadDate);
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        db.close();
+
+        return scoreDetails;
+    }
 
 
 }
