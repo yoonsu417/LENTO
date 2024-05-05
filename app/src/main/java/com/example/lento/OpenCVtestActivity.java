@@ -115,38 +115,24 @@ public class OpenCVtestActivity extends AppCompatActivity {
             System.out.println(Arrays.toString(stave));
         }
 
-        // 정규화 2
 
-        // 객체검출 : 수정중
-        /*
-        List<int[]> testStaves = normalizedResult.second;
-        List<Integer> streamStaves = new ArrayList<>();
-        for(int i = 0; i < normalizedStaves.size(); i++) {
-            streamStaves.add(normalizedStaves.stream().mapToInt(i));
-                    //= normalizedStaves.stream().mapToInt(i -> i).toArray();
-            //streamStaves = normalizedStaves.get(i);
-        }
-
-        Pair<Mat, List<dPair<Integer, Rect>>> odResult = objectDetection(imageWithoutStaves, normalizedStaves);
+        // 객체 검출 + 악보에 표시
+        dPair<Mat, List<dPair<Integer, Rect>>> odResult = objectDetection(imageWithoutStaves, normalizedStaves);
         Mat odImage = odResult.first;
-        //List<dPair<Integer, Rect>> odStaves = odResult.second;
+        List<dPair<Integer, Rect>> odStaves = odResult.second;
 
-
-
-         */
-
-
+        for (dPair<Integer, Rect> stave : odStaves) { // 돌아가는지 확인
+            System.out.println("테스트중입니다");
+        }
 
 
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
-        Bitmapimage = Bitmap.createBitmap(normalizedImage.cols(), normalizedImage.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(normalizedImage, Bitmapimage);
+        Bitmapimage = Bitmap.createBitmap(odImage.cols(), odImage.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(odImage, Bitmapimage);
 
         // 비트맵 이미지 화면 출력
         OpenCVtest.setImageBitmap(Bitmapimage);
-
-
 
     }
 
@@ -189,12 +175,11 @@ public class OpenCVtestActivity extends AppCompatActivity {
     }
 
 
-
-    /*
-    // 객체 검출
-    public static Pair<Mat, List<dPair<Integer, Rect>>> objectDetection(Mat image, List<int[]> staves) {
+    // 객체 검출 + 표시
+    public static dPair<Mat, List<dPair<Integer, Rect>>> objectDetection(Mat image, List<int[]> staves) {
         int lines = (int) Math.ceil(staves.size() / 5.0);
         List<dPair<Integer, Rect>> objects = new ArrayList<>();
+
 
         Mat closingImage = new Mat();
         Imgproc.morphologyEx(image, closingImage, Imgproc.MORPH_CLOSE, new Mat());
@@ -211,24 +196,33 @@ public class OpenCVtestActivity extends AppCompatActivity {
             double h = stats.get(i, 3)[0];
             double area = stats.get(i, 4)[0];
 
+            Rect testRect = new Rect((int) x, (int) y, (int) w, (int) h);
+
             if (w >= getWeighted(5) && h >= getWeighted(5)) {
                 double center = getCenter(y, h);
                 for (int line = 0; line < lines; line++) {
-                    double areaTop = staves.get(line * 5) - getWeighted(20);
-                    double areaBot = staves.get((line + 1) * 5 - 1) + getWeighted(20);
+                    double areaTop = staves.get(line * 5)[0] - getWeighted(20);
+                    double areaBot = staves.get((line + 1) * 5 - 1)[0] + getWeighted(20);
 
                     if (areaTop <= center && center <= areaBot) {
-                        objects.add(new dPair<>(line, new Rect((int) x, (int) y, (int) w, (int) h)));
+                        objects.add(new dPair<>(line, testRect));
                     }
                 }
             }
+            // 정작 인식한 객체를 그리는 코드가 없더라구요... 아마 그래서 안된게 아닌가 싶습니다 :)
+            // image에 양 지점 포인터 영역에 해당하는 컨투어 그리기 (두께 자유)
+            Imgproc.rectangle(image, testRect.tl(), testRect.br(), new Scalar(255, 0, 0), 2);
+            // test용 출력
+            //System.out.print(x);    System.out.print(y);    System.out.print(w);    System.out.println(h);
+
         }
 
         Collections.sort(objects, (a, b) -> a.getFirst().compareTo(b.getFirst()));
 
 
-        return new Pair<>(image, objects);
+        return new dPair<>(image, objects);
     }
+
 
 
     private static double getWeighted(int value) {
@@ -260,6 +254,4 @@ public class OpenCVtestActivity extends AppCompatActivity {
         }
     }
 
-
-     */
 }
