@@ -34,6 +34,7 @@ import org.opencv.android.OpenCVLoader;
 
 import android.view.View;
 
+
 public class OpenCVtestActivity extends AppCompatActivity {
     private static final String TAG = "TEST_OPEN_CV_ANDROID";
 
@@ -105,17 +106,19 @@ public class OpenCVtestActivity extends AppCompatActivity {
         Mat imageWithoutStaves = result.first;
         List<int[]> stavesInfo = result.second;
 
+        System.out.println("오선 좌표");
         for (int[] stave : stavesInfo) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
             System.out.println(Arrays.toString(stave));
         }
 
 
         // 4. 정규화
-        Pair<Mat, List<int[]>> normalizedResult = normalization(imageWithoutStaves, stavesInfo, 10); // 오선 간격 10 픽셀
+        Pair<Mat, List<double[]>> normalizedResult = normalization(imageWithoutStaves, stavesInfo, 10); // 오선 간격 10 픽셀
         Mat normalizedImage = normalizedResult.first;
-        List<int[]> normalizedStaves = normalizedResult.second;
+        List<double[]> normalizedStaves = normalizedResult.second;
 
-        for (int[] stave : normalizedStaves) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
+        System.out.println("정규화 후 오선 좌표");
+        for (double[] stave : normalizedStaves) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
             System.out.println(Arrays.toString(stave));
         }
 
@@ -123,9 +126,40 @@ public class OpenCVtestActivity extends AppCompatActivity {
         // 5. 객체 검출
         Pair<Mat, List<Object[]>> detect = objectDetection(normalizedImage, normalizedStaves);
         Mat detectionImage = detect.first;
-        List<Object[]> detectionStaves = detect.second;
+        List<Object[]> detectionObjects = detect.second;
 
 
+        /*
+        // 6. 객체 분석
+        for(Object[] obj : detectionObjects) {
+            MatOfInt stats = new MatOfInt((int[]) obj[1]);
+            List<int[]> stems = stemDetection(detectionImage, stats, 30);
+
+            Boolean direction = null;
+            if(stems.size() > 0){
+                if (stems.get(0)[0] - stats.get(0, 0)[0] >= getWeighted(5)) {
+                    direction = true;
+                } else {
+                    direction = false;
+                }
+            }
+
+            obj[2] = new ArrayList<>(stems);
+            obj[3] = direction;
+        }
+
+        for(Object[] obj: detectionObjects){
+            int[] stats = (int[]) obj[1];
+            List<int[]> stems = (List<int[]>) obj[2];
+            if (!stems.isEmpty()) {
+                Point loc = new Point(stats[0], stats[1] + stats[3] + 20);
+                String text = String.valueOf(stems.size());
+                put_text(detectionImage, text, loc);
+            }
+        }
+
+
+         */
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
         Bitmapimage = Bitmap.createBitmap(detectionImage.cols(), detectionImage.rows(), Bitmap.Config.ARGB_8888);
@@ -137,7 +171,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
     }
 
 
-    // -------- funtions --------
+    // ---------------------------------------- funtions ------------------------------------------
 
     private static int getWeighted(int value) {
         int standard = 10;
@@ -161,13 +195,87 @@ public class OpenCVtestActivity extends AppCompatActivity {
         Imgproc.putText(image, text, loc, Imgproc.FONT_HERSHEY_SIMPLEX, fontScale, color, thickness);
     }
 
+    final boolean VERTICAL = true;
+    final boolean HORIZONTAL = false;
 
-    // --------  Modules -----------
+    public static List<int[]> getLine(Mat image, boolean axis, int axis_value, int start, int end, int length){
+
+        List<int[]> points = new ArrayList<>();
+
+        // 수직이면
+        if (axis) {
+            for(int i = start; i < end; i++){
+                int[] point = {i, axis_value};
+                points.add(point);
+            }
+        }else{
+            for(int i = start; i< end; i++){
+                int[] point = {axis_value, i};
+                points.add(point);
+            }
+        }
+        int pixels = 0;
+        int y = 0;
+        int x = 0;
+        for(int i = 0; i<points.size(); i++){
+            int[] point = points.get(i);
+            y = point[0];
+            x = point[1];
+            pixels += (image.get(y,x)[0] == 255) ? 1 : 0; //흰색 픽셀 개수
+
+            int next_y = axis ? y + 1 : y;
+            int next_x = axis ? x : x + 1;
+            int next_point = (int)image.get(next_y, next_x)[0];  // 다음 탐색할 지점
+
+            if(next_point == 0 || i == points.size() - 1){
+                if (pixels >= getWeighted(length)){
+                    break;
+                }else{
+                    pixels = 0;
+                }
+            }
+        }
+
+        return new ArrayList<>(List.of(new int[]{axis? y: x, pixels}));
+    }
+
+    // 기둥 검출 함수
+    public static List<int[]> stemDetection(Mat image, MatOfInt stats, int length){
+        List<int[]> stems = new ArrayList<>();
+
+        int[] stat = stats.toArray();
+        for (int i = 0; i < stat.length; i += 5) {
+            int x = stat[i];
+            int y = stat[i + 1];
+            int w = stat[i + 2];
+            int h = stat[i + 3];
+            int area = stat[i + 4];
+
+            for (int col = x; col < x + w; col++) {
+                List<int[]> result =  getLine(image, true,  col, y, y + h, length);
+                int end = result.get(0)[0];
+                int pixels = result.get(0)[1];
+
+                if (pixels > 0) {
+                    if (stems.isEmpty() || Math.abs(stems.get(stems.size() - 1)[0] + stems.get(stems.size() - 1)[2] - col) >= 1) {
+                        int[] stem = {col, end - pixels + 1, 1, pixels};
+                        stems.add(stem);
+                    } else {
+                        stems.get(stems.size() - 1)[2]++;
+                    }
+                }
+            }
+        }
+        return stems;
+    }
+
+    // -------------------------------------  Modules ---------------------------------------------
 
     // 3. (수평 히스토그램을 사용하여) 오선을 삭제하는 메서드
     public static Pair<Mat, List<int[]>> removeStaves(Mat image) {
         int height = image.rows();
         int width = image.cols();
+
         List<int[]> staves = new ArrayList<>();
 
         // 오선 검출
@@ -181,8 +289,20 @@ public class OpenCVtestActivity extends AppCompatActivity {
             if (pixels >= width * 0.5) { // 이미지 너비의 50% 이상이라면
                 if (staves.isEmpty() || Math.abs(staves.get(staves.size() - 1)[0] + staves.get(staves.size() - 1)[1] - row) > 1) { // 첫 오선이거나 이전에 검출된 오선과 다른 오선
                     staves.add(new int[] {row, 0}); // 오선 추가 [오선의 y 좌표][오선 높이]
+                    /*
+                    System.out.println("if 구문");
+                    for (int[] stave : staves) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
+                        System.out.println(Arrays.toString(stave));
+                    }
+                     */
                 } else { // 이전에 검출된 오선과 같은 오선
                     staves.get(staves.size() - 1)[1]++; // 높이 업데이트
+                    /*
+                    for (int[] stave : staves) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
+                        System.out.println("else구문");
+                        System.out.println(Arrays.toString(stave));
+                    }
+                    */
                 }
             }
         }
@@ -203,7 +323,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
     }
 
     // 4. 정규화
-    public static Pair<Mat, List<int[]>> normalization(Mat image, List<int[]> staves, int standard) {
+    public static Pair<Mat, List<double[]>> normalization(Mat image, List<int[]> staves, int standard) {
         double avgDistance = 0;
         int lines = staves.size() / 5; // 보표 개수 구하기
 
@@ -218,6 +338,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
         int height = image.rows();
         int width = image.cols();
+
         double weight = standard / avgDistance; // standard : 오선 간격
         int newWidth = (int) (width * weight);
         int newHeight = (int) (height * weight);
@@ -230,9 +351,9 @@ public class OpenCVtestActivity extends AppCompatActivity {
         Imgproc.threshold(resizedImage, resizedImage, 127, 255, Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
 
 
-        List<int[]> normalizedStaves = new ArrayList<>();
+        List<double[]> normalizedStaves = new ArrayList<>();
         for (int[] staff : staves) {
-            normalizedStaves.add(new int[]{(int) (staff[0] * weight), (int) (staff[1] * weight)});
+            normalizedStaves.add(new double[]{(staff[0] * weight),(staff[1] * weight)});
         }
 
         return new Pair<>(resizedImage, normalizedStaves);
@@ -240,13 +361,13 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
 
     // 5. 객체 검출
-    public static Pair<Mat, List<Object[]>> objectDetection(Mat image, List<int[]> staves) {
+    public static Pair<Mat, List<Object[]>> objectDetection(Mat image, List<double[]> staves) {
         int lines = (int) Math.ceil(staves.size() / 5.0);
         List<Object[]> objects = new ArrayList<>();
         Mat closeImage = closing(image);
 
         Mat labels = new Mat();
-        MatOfInt stats = new MatOfInt();
+        Mat stats = new Mat();
         Mat centroids = new Mat();
         int cnt = Imgproc.connectedComponentsWithStats(closeImage, labels, stats, centroids);
 
@@ -287,8 +408,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 System.out.println(Arrays.toString(intArray) + "]");
                 }
 
-                objects.sort(Comparator.comparingInt(o -> ((int[]) o[1])[0]));
-
+        objects.sort(Comparator.comparing((Object[] o) -> (Integer) o[0]).thenComparingInt(o -> ((int[]) o[1])[0]));
                 System.out.println("정렬후");
                 for (Object[] obj : objects) {
                 System.out.print("[" + obj[0] + ", ");
