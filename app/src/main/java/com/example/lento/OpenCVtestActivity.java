@@ -121,79 +121,15 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
 
         // 5. 객체 검출
-        int lines = (int) Math.ceil(normalizedStaves.size() / 5.0);
-        List<Object[]> objects = new ArrayList<>();
-        Mat closeImage = closing(normalizedImage);
-
-        Mat labels = new Mat();
-        MatOfInt stats = new MatOfInt();
-        Mat centroids = new Mat();
-        int cnt = Imgproc.connectedComponentsWithStats(closeImage, labels, stats, centroids);
-
-        for(int i = 1; i< cnt; i++){
-            int x = (int) stats.get(i, 0)[0];
-            int y = (int) stats.get(i, 1)[0];
-            int w = (int) stats.get(i, 2)[0];
-            int h = (int) stats.get(i, 3)[0];
-            int area = (int) stats.get(i, 4)[0];
-            if (w >= getWeighted(5) && h >= getWeighted(5)) {
-                double center = getCenter(y, h);
-                for (int line = 0; line < lines; line++) {
-                    double areaTop = normalizedStaves.get(line * 5)[0] - getWeighted(20);
-                    double areaBot = normalizedStaves.get((line + 1) * 5 - 1)[0] + getWeighted(20);
-                    Rect rect = new Rect(x, y, w, h);
-                    Imgproc.rectangle(normalizedImage, rect, new Scalar(255, 0, 0), 1);
-
-                    if (areaTop <= center && center <= areaBot) {
-                        objects.add(new Object[]{line, new int[]{x, y, w, h, (int) area}});
-                    }
-                }
-            }
-
-            /*
-            // 구성요소들의 넓이
-            Point loc1 = new Point(x, y+ h + 30);
-            Point loc2 = new Point(x, y+ h + 60);
-            put_text(normalizedImage, String.valueOf(w), loc1);
-            put_text(normalizedImage, String.valueOf(h), loc2);
-            */
-        }
-
-        System.out.println("정렬 전");
-        // objects 구성요소 확인하기 위한 출력(Logcat)
-        for (Object[] obj : objects) {
-            System.out.print("[" + obj[0] + ", ");
-            int[] intArray = (int[]) obj[1];
-            System.out.println(Arrays.toString(intArray) + "]");
-        }
-
-        objects.sort(Comparator.comparingInt(o -> ((int[]) o[1])[0]));
-
-        System.out.println("정렬후");
-        for (Object[] obj : objects) {
-            System.out.print("[" + obj[0] + ", ");
-            int[] intArray = (int[]) obj[1];
-            System.out.println(Arrays.toString(intArray) + "]");
-        }
+        Pair<Mat, List<Object[]>> detect = objectDetection(normalizedImage, normalizedStaves);
+        Mat detectionImage = detect.first;
+        List<Object[]> detectionStaves = detect.second;
 
 
-        /*
-
-        // 객체 검출 + 악보에 표시
-        dPair<Mat, List<dPair<Integer, Rect>>> odResult = objectDetection(imageWithoutStaves, normalizedStaves);
-        Mat odImage = odResult.first;
-        List<dPair<Integer, Rect>> odStaves = odResult.second;
-
-        for (dPair<Integer, Rect> stave : odStaves) { // 돌아가는지 확인
-            System.out.println("테스트중입니다");
-        }
-
-
-         */
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
-        Bitmapimage = Bitmap.createBitmap(normalizedImage.cols(), normalizedImage.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(normalizedImage, Bitmapimage);
+        Bitmapimage = Bitmap.createBitmap(detectionImage.cols(), detectionImage.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(detectionImage, Bitmapimage);
 
         // 비트맵 이미지 화면 출력
         OpenCVtest.setImageBitmap(Bitmapimage);
@@ -302,7 +238,72 @@ public class OpenCVtestActivity extends AppCompatActivity {
         return new Pair<>(resizedImage, normalizedStaves);
     }
 
+
+    // 5. 객체 검출
+    public static Pair<Mat, List<Object[]>> objectDetection(Mat image, List<int[]> staves) {
+        int lines = (int) Math.ceil(staves.size() / 5.0);
+        List<Object[]> objects = new ArrayList<>();
+        Mat closeImage = closing(image);
+
+        Mat labels = new Mat();
+        MatOfInt stats = new MatOfInt();
+        Mat centroids = new Mat();
+        int cnt = Imgproc.connectedComponentsWithStats(closeImage, labels, stats, centroids);
+
+        for(int i = 1; i< cnt; i++){
+            int x = (int) stats.get(i, 0)[0];
+            int y = (int) stats.get(i, 1)[0];
+            int w = (int) stats.get(i, 2)[0];
+            int h = (int) stats.get(i, 3)[0];
+            int area = (int) stats.get(i, 4)[0];
+            if (w >= getWeighted(5) && h >= getWeighted(5)) {
+                double center = getCenter(y, h);
+                for (int line = 0; line < lines; line++) {
+                    double areaTop = staves.get(line * 5)[0] - getWeighted(20);
+                    double areaBot = staves.get((line + 1) * 5 - 1)[0] + getWeighted(20);
+                    Rect rect = new Rect(x, y, w, h);
+                    Imgproc.rectangle(image, rect, new Scalar(255, 0, 0), 1);
+
+                    if (areaTop <= center && center <= areaBot) {
+                        objects.add(new Object[]{line, new int[]{x, y, w, h, (int) area}});
+                    }
+                }
+            }
+
+            /*
+            // 구성요소들의 넓이
+            Point loc1 = new Point(x, y+ h + 30);
+            Point loc2 = new Point(x, y+ h + 60);
+            put_text(normalizedImage, String.valueOf(w), loc1);
+            put_text(normalizedImage, String.valueOf(h), loc2);
+            */
+}
+
+        System.out.println("정렬 전");
+                // objects 구성요소 확인하기 위한 출력(Logcat)
+                for (Object[] obj : objects) {
+                System.out.print("[" + obj[0] + ", ");
+                int[] intArray = (int[]) obj[1];
+                System.out.println(Arrays.toString(intArray) + "]");
+                }
+
+                objects.sort(Comparator.comparingInt(o -> ((int[]) o[1])[0]));
+
+                System.out.println("정렬후");
+                for (Object[] obj : objects) {
+                System.out.print("[" + obj[0] + ", ");
+                int[] intArray = (int[]) obj[1];
+                System.out.println(Arrays.toString(intArray) + "]");
+                }
+
+
+        return new Pair<>(image, objects);
+    }
+
+
+
     /*
+
     // 5. 객체 검출 + 표시
     public static dPair<Mat, List<dPair<Integer, Rect>>> objectDetection(Mat image, List<int[]> staves) {
         int lines = (int) Math.ceil(staves.size() / 5.0);
@@ -351,82 +352,5 @@ public class OpenCVtestActivity extends AppCompatActivity {
         return new dPair<>(image, objects);
     }
 
-
-
-
-    public static Pair<Mat, List<int[]>> detection(Mat image, List<int[]> staves) {
-        // 객체 검출
-
-        Mat closeImage = closing(image);
-
-        int lines = (int) Math.ceil(staves.size() / 5.0);
-        List<int[]> objects = new ArrayList<>();
-
-        Mat labels = new Mat();
-        Mat stats = new Mat();
-        Mat centroids = new Mat();
-        // labels -> 각 픽셀에 할당된 레이블 값, stats -> 각 구성 요소의 정보(x,y,너비, 높이, 면적...등등), centroids -> 구성 요소의 무게 중심 좌표, numComponents -> 구성 요소의 총 개수
-        int numObjects = Imgproc.connectedComponentsWithStats(closeImage, labels, stats, centroids);
-        for (int i = 1; i < numObjects; i++) {
-            int x = (int) stats.get(i, 0)[0];
-            int y = (int) stats.get(i, 1)[0];
-            int width = (int) stats.get(i, 2)[0];
-            int height = (int) stats.get(i, 3)[0];
-            double area = stats.get(i, 4)[0];
-            if (width >= getWeighted(5) && height >= getWeighted(5)) {
-                Rect rect = new Rect(x, y, width, height);
-                Imgproc.rectangle(image, rect, new Scalar(255, 0, 0), 1);
-                int center = getCenter(y, height);
-                for (int j = 0; j < lines; j++) {
-                    int area_top = staves.get(lines * 5)[0] - getWeighted(20);
-                    int area_bot = staves.get((lines + 1) * 5 - 1)[0] - getWeighted(20);
-
-                    if(area_top <= center && center <= area_bot){
-                        objects.add(new int[]{lines, x, y, width, height, (int)area});
-                    }
-
-                }
-
-            }
-
-
-
-
-            Point loc1 = new Point(x, y+ height + 30);
-            Point loc2 = new Point(x, y+ height + 60);
-            text.put_text(normalizedImage, String.valueOf(width), loc1);
-            text.put_text(normalizedImage, String.valueOf(height), loc2);
-
-
-
-        }
-
-        objects.sort(Comparator.comparingInt(o -> o[1]));
-        return new Pair<>(image, objects);
-    }
-
-
-
-
-
-    // *세정* Pair -> dPair : 기존 Util 라이브러리의 Pair과의 오버라이딩 문제로 클래스 이름 변경했습니다.
-    private static class dPair<T, U> {
-        private T first;
-        private U second;
-
-        public dPair(T first, U second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        public T getFirst() {
-            return first;
-        }
-
-        public U getSecond() {
-            return second;
-        }
-    }
-
-     */
+ */
 }
