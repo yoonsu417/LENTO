@@ -1,6 +1,5 @@
 package com.example.lento;
 
-import static com.example.lento.Modules.normalization;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,17 +9,23 @@ import android.os.Bundle;
 import android.util.Pair;
 import android.widget.ImageView;
 import android.util.Log;
+
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Core;
+import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -65,12 +70,12 @@ public class OpenCVtestActivity extends AppCompatActivity {
         }
 
 
-        // 그레이 스케일
+        // 1. 그레이 스케일
         Mat grayImage = new Mat();
         Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
 
 
-        // 이진화
+        // 2. 이진화
         Mat binaryImage = new Mat();
         Imgproc.threshold(grayImage, binaryImage, 0, 255, Imgproc.THRESH_BINARY_INV | Imgproc.THRESH_OTSU);
 
@@ -95,9 +100,8 @@ public class OpenCVtestActivity extends AppCompatActivity {
         // 추출된 보표 영역만을 남기고 나머지 부분을 검정색으로 만듬
         Core.bitwise_and(binaryImage, extractedImage, binaryImage);
 
-        // 오선 제거
-        Modules remove = new Modules();
-        Pair<Mat, List<int[]>> result = remove.removeStaves(binaryImage);
+        // 3. 오선 제거
+        Pair<Mat, List<int[]>> result = removeStaves(binaryImage);
         Mat imageWithoutStaves = result.first;
         List<int[]> stavesInfo = result.second;
 
@@ -105,9 +109,9 @@ public class OpenCVtestActivity extends AppCompatActivity {
             System.out.println(Arrays.toString(stave));
         }
 
-        // 정규화
-        Modules normal = new Modules();
-        Pair<Mat, List<int[]>> normalizedResult = normal.normalization(imageWithoutStaves, stavesInfo, 10); // 오선 간격 10 픽셀
+
+        // 4. 정규화
+        Pair<Mat, List<int[]>> normalizedResult = normalization(imageWithoutStaves, stavesInfo, 10); // 오선 간격 10 픽셀
         Mat normalizedImage = normalizedResult.first;
         List<int[]> normalizedStaves = normalizedResult.second;
 
@@ -115,6 +119,65 @@ public class OpenCVtestActivity extends AppCompatActivity {
             System.out.println(Arrays.toString(stave));
         }
 
+
+        // 5. 객체 검출
+        int lines = (int) Math.ceil(normalizedStaves.size() / 5.0);
+        List<Object[]> objects = new ArrayList<>();
+        Mat closeImage = closing(normalizedImage);
+
+        Mat labels = new Mat();
+        MatOfInt stats = new MatOfInt();
+        Mat centroids = new Mat();
+        int cnt = Imgproc.connectedComponentsWithStats(closeImage, labels, stats, centroids);
+
+        for(int i = 1; i< cnt; i++){
+            int x = (int) stats.get(i, 0)[0];
+            int y = (int) stats.get(i, 1)[0];
+            int w = (int) stats.get(i, 2)[0];
+            int h = (int) stats.get(i, 3)[0];
+            int area = (int) stats.get(i, 4)[0];
+            if (w >= getWeighted(5) && h >= getWeighted(5)) {
+                double center = getCenter(y, h);
+                for (int line = 0; line < lines; line++) {
+                    double areaTop = normalizedStaves.get(line * 5)[0] - getWeighted(20);
+                    double areaBot = normalizedStaves.get((line + 1) * 5 - 1)[0] + getWeighted(20);
+                    Rect rect = new Rect(x, y, w, h);
+                    Imgproc.rectangle(normalizedImage, rect, new Scalar(255, 0, 0), 1);
+
+                    if (areaTop <= center && center <= areaBot) {
+                        objects.add(new Object[]{line, new int[]{x, y, w, h, (int) area}});
+                    }
+                }
+            }
+
+            /*
+            // 구성요소들의 넓이
+            Point loc1 = new Point(x, y+ h + 30);
+            Point loc2 = new Point(x, y+ h + 60);
+            put_text(normalizedImage, String.valueOf(w), loc1);
+            put_text(normalizedImage, String.valueOf(h), loc2);
+            */
+        }
+
+        System.out.println("정렬 전");
+        // objects 구성요소 확인하기 위한 출력(Logcat)
+        for (Object[] obj : objects) {
+            System.out.print("[" + obj[0] + ", ");
+            int[] intArray = (int[]) obj[1];
+            System.out.println(Arrays.toString(intArray) + "]");
+        }
+
+        objects.sort(Comparator.comparingInt(o -> ((int[]) o[1])[0]));
+
+        System.out.println("정렬후");
+        for (Object[] obj : objects) {
+            System.out.print("[" + obj[0] + ", ");
+            int[] intArray = (int[]) obj[1];
+            System.out.println(Arrays.toString(intArray) + "]");
+        }
+
+
+        /*
 
         // 객체 검출 + 악보에 표시
         dPair<Mat, List<dPair<Integer, Rect>>> odResult = objectDetection(imageWithoutStaves, normalizedStaves);
@@ -126,17 +189,46 @@ public class OpenCVtestActivity extends AppCompatActivity {
         }
 
 
+         */
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
-        Bitmapimage = Bitmap.createBitmap(odImage.cols(), odImage.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(odImage, Bitmapimage);
+        Bitmapimage = Bitmap.createBitmap(normalizedImage.cols(), normalizedImage.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(normalizedImage, Bitmapimage);
 
         // 비트맵 이미지 화면 출력
         OpenCVtest.setImageBitmap(Bitmapimage);
 
     }
 
-    // 수평 히스토그램을 사용하여 오선을 삭제하는 메서드
+
+    // -------- funtions --------
+
+    private static int getWeighted(int value) {
+        int standard = 10;
+        return (int)(value * (standard / 10));
+    }
+
+    private static double getCenter(int y, int h) {
+        return ( y + y + h ) / 2;
+    }
+
+    public static Mat closing(Mat image) {
+        Mat kernel = Mat.ones(getWeighted(5), getWeighted(5), CvType.CV_8U);
+        Imgproc.morphologyEx(image, image, Imgproc.MORPH_CLOSE, kernel);
+        return image;
+    }
+
+    public static void put_text(Mat image, String text, Point loc){
+        double fontScale = 0.6;
+        int thickness = 2;
+        Scalar color = new Scalar(255, 0, 0);
+        Imgproc.putText(image, text, loc, Imgproc.FONT_HERSHEY_SIMPLEX, fontScale, color, thickness);
+    }
+
+
+    // --------  Modules -----------
+
+    // 3. (수평 히스토그램을 사용하여) 오선을 삭제하는 메서드
     public static Pair<Mat, List<int[]>> removeStaves(Mat image) {
         int height = image.rows();
         int width = image.cols();
@@ -174,8 +266,44 @@ public class OpenCVtestActivity extends AppCompatActivity {
         return new Pair<>(image,staves);
     }
 
+    // 4. 정규화
+    public static Pair<Mat, List<int[]>> normalization(Mat image, List<int[]> staves, int standard) {
+        double avgDistance = 0;
+        int lines = staves.size() / 5; // 보표 개수 구하기
 
-    // 객체 검출 + 표시
+        for (int line = 0; line < lines; line++) { // 평균 간격
+            for (int staff = 0; staff < 4; staff++) {
+                int staffAbove = staves.get(line * 5 + staff)[0];
+                int staffBelow = staves.get(line * 5 + staff + 1)[0];
+                avgDistance += Math.abs(staffAbove - staffBelow);
+            }
+        }
+        avgDistance /= staves.size() - lines;
+
+        int height = image.rows();
+        int width = image.cols();
+        double weight = standard / avgDistance; // standard : 오선 간격
+        int newWidth = (int) (width * weight);
+        int newHeight = (int) (height * weight);
+
+        Mat resizedImage = new Mat();
+        Imgproc.resize(image, resizedImage, new org.opencv.core.Size(newWidth, newHeight));
+
+        resizedImage.convertTo(resizedImage, org.opencv.core.CvType.CV_8UC1);
+
+        Imgproc.threshold(resizedImage, resizedImage, 127, 255, Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
+
+
+        List<int[]> normalizedStaves = new ArrayList<>();
+        for (int[] staff : staves) {
+            normalizedStaves.add(new int[]{(int) (staff[0] * weight), (int) (staff[1] * weight)});
+        }
+
+        return new Pair<>(resizedImage, normalizedStaves);
+    }
+
+    /*
+    // 5. 객체 검출 + 표시
     public static dPair<Mat, List<dPair<Integer, Rect>>> objectDetection(Mat image, List<int[]> staves) {
         int lines = (int) Math.ceil(staves.size() / 5.0);
         List<dPair<Integer, Rect>> objects = new ArrayList<>();
@@ -225,14 +353,60 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
 
 
-    private static double getWeighted(int value) {
-        int standard = 10;
-        return (int)(value * (standard / 10));
+
+    public static Pair<Mat, List<int[]>> detection(Mat image, List<int[]> staves) {
+        // 객체 검출
+
+        Mat closeImage = closing(image);
+
+        int lines = (int) Math.ceil(staves.size() / 5.0);
+        List<int[]> objects = new ArrayList<>();
+
+        Mat labels = new Mat();
+        Mat stats = new Mat();
+        Mat centroids = new Mat();
+        // labels -> 각 픽셀에 할당된 레이블 값, stats -> 각 구성 요소의 정보(x,y,너비, 높이, 면적...등등), centroids -> 구성 요소의 무게 중심 좌표, numComponents -> 구성 요소의 총 개수
+        int numObjects = Imgproc.connectedComponentsWithStats(closeImage, labels, stats, centroids);
+        for (int i = 1; i < numObjects; i++) {
+            int x = (int) stats.get(i, 0)[0];
+            int y = (int) stats.get(i, 1)[0];
+            int width = (int) stats.get(i, 2)[0];
+            int height = (int) stats.get(i, 3)[0];
+            double area = stats.get(i, 4)[0];
+            if (width >= getWeighted(5) && height >= getWeighted(5)) {
+                Rect rect = new Rect(x, y, width, height);
+                Imgproc.rectangle(image, rect, new Scalar(255, 0, 0), 1);
+                int center = getCenter(y, height);
+                for (int j = 0; j < lines; j++) {
+                    int area_top = staves.get(lines * 5)[0] - getWeighted(20);
+                    int area_bot = staves.get((lines + 1) * 5 - 1)[0] - getWeighted(20);
+
+                    if(area_top <= center && center <= area_bot){
+                        objects.add(new int[]{lines, x, y, width, height, (int)area});
+                    }
+
+                }
+
+            }
+
+
+
+
+            Point loc1 = new Point(x, y+ height + 30);
+            Point loc2 = new Point(x, y+ height + 60);
+            text.put_text(normalizedImage, String.valueOf(width), loc1);
+            text.put_text(normalizedImage, String.valueOf(height), loc2);
+
+
+
+        }
+
+        objects.sort(Comparator.comparingInt(o -> o[1]));
+        return new Pair<>(image, objects);
     }
 
-    private static double getCenter(double y, double h) {
-        return y + y + h / 2;
-    }
+
+
 
 
     // *세정* Pair -> dPair : 기존 Util 라이브러리의 Pair과의 오버라이딩 문제로 클래스 이름 변경했습니다.
@@ -254,4 +428,5 @@ public class OpenCVtestActivity extends AppCompatActivity {
         }
     }
 
+     */
 }
