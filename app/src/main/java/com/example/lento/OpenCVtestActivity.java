@@ -127,39 +127,19 @@ public class OpenCVtestActivity extends AppCompatActivity {
         Pair<Mat, List<Object[]>> detect = objectDetection(normalizedImage, normalizedStaves);
         Mat detectionImage = detect.first;
         List<Object[]> detectionObjects = detect.second;
+        System.out.println("객체 검출 후"); // 확인 용도 (Logcat)
+        for (Object[] obj : detectionObjects) {
+            System.out.print("[" + obj[0] + ", ");
+            int[] intArray = (int[]) obj[1];
+            System.out.println(Arrays.toString(intArray) + "]");
+        }
 
 
-        /*
         // 6. 객체 분석
-        for(Object[] obj : detectionObjects) {
-            MatOfInt stats = new MatOfInt((int[]) obj[1]);
-            List<int[]> stems = stemDetection(detectionImage, stats, 30);
-
-            Boolean direction = null;
-            if(stems.size() > 0){
-                if (stems.get(0)[0] - stats.get(0, 0)[0] >= getWeighted(5)) {
-                    direction = true;
-                } else {
-                    direction = false;
-                }
-            }
-
-            obj[2] = new ArrayList<>(stems);
-            obj[3] = direction;
-        }
-
-        for(Object[] obj: detectionObjects){
-            int[] stats = (int[]) obj[1];
-            List<int[]> stems = (List<int[]>) obj[2];
-            if (!stems.isEmpty()) {
-                Point loc = new Point(stats[0], stats[1] + stats[3] + 20);
-                String text = String.valueOf(stems.size());
-                put_text(detectionImage, text, loc);
-            }
-        }
 
 
-         */
+
+
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
         Bitmapimage = Bitmap.createBitmap(detectionImage.cols(), detectionImage.rows(), Bitmap.Config.ARGB_8888);
@@ -169,6 +149,13 @@ public class OpenCVtestActivity extends AppCompatActivity {
         OpenCVtest.setImageBitmap(Bitmapimage);
 
     }
+
+
+
+
+
+
+
 
 
     // ---------------------------------------- funtions ------------------------------------------
@@ -239,35 +226,25 @@ public class OpenCVtestActivity extends AppCompatActivity {
         return new ArrayList<>(List.of(new int[]{axis? y: x, pixels}));
     }
 
+    /*
     // 기둥 검출 함수
-    public static List<int[]> stemDetection(Mat image, MatOfInt stats, int length){
-        List<int[]> stems = new ArrayList<>();
+    public static List<int[]> stemDetection(Mat image, int[] stats, int length){
 
-        int[] stat = stats.toArray();
-        for (int i = 0; i < stat.length; i += 5) {
-            int x = stat[i];
-            int y = stat[i + 1];
-            int w = stat[i + 2];
-            int h = stat[i + 3];
-            int area = stat[i + 4];
-
-            for (int col = x; col < x + w; col++) {
-                List<int[]> result =  getLine(image, true,  col, y, y + h, length);
-                int end = result.get(0)[0];
-                int pixels = result.get(0)[1];
-
-                if (pixels > 0) {
-                    if (stems.isEmpty() || Math.abs(stems.get(stems.size() - 1)[0] + stems.get(stems.size() - 1)[2] - col) >= 1) {
-                        int[] stem = {col, end - pixels + 1, 1, pixels};
-                        stems.add(stem);
-                    } else {
-                        stems.get(stems.size() - 1)[2]++;
-                    }
-                }
-            }
-        }
-        return stems;
     }
+
+     */
+
+
+
+
+
+
+
+
+
+
+
+
 
     // -------------------------------------  Modules ---------------------------------------------
 
@@ -321,6 +298,8 @@ public class OpenCVtestActivity extends AppCompatActivity {
         }
         return new Pair<>(image,staves);
     }
+
+
 
     // 4. 정규화
     public static Pair<Mat, List<double[]>> normalization(Mat image, List<int[]> staves, int standard) {
@@ -397,26 +376,22 @@ public class OpenCVtestActivity extends AppCompatActivity {
             Point loc2 = new Point(x, y+ h + 60);
             put_text(normalizedImage, String.valueOf(w), loc1);
             put_text(normalizedImage, String.valueOf(h), loc2);
-            */
+
+             */
+
 }
 
-        System.out.println("정렬 전");
-                // objects 구성요소 확인하기 위한 출력(Logcat)
-                for (Object[] obj : objects) {
-                System.out.print("[" + obj[0] + ", ");
-                int[] intArray = (int[]) obj[1];
-                System.out.println(Arrays.toString(intArray) + "]");
-                }
+            /*
+            System.out.println("정렬 전");
+            // objects 구성요소 확인하기 위한 출력(Logcat)
+            for (Object[] obj : objects) {
+            System.out.print("[" + obj[0] + ", ");
+            int[] intArray = (int[]) obj[1];
+            System.out.println(Arrays.toString(intArray) + "]");
+            }
 
+            */
         objects.sort(Comparator.comparing((Object[] o) -> (Integer) o[0]).thenComparingInt(o -> ((int[]) o[1])[0]));
-                System.out.println("정렬후");
-                for (Object[] obj : objects) {
-                System.out.print("[" + obj[0] + ", ");
-                int[] intArray = (int[]) obj[1];
-                System.out.println(Arrays.toString(intArray) + "]");
-                }
-
-
         return new Pair<>(image, objects);
     }
 
