@@ -18,11 +18,12 @@ public class DBManager {
         this.context = context;
     }
 
-    public List<Score> getScores() {
+    public List<Score> getScores(String user) {
         List<Score> scoreList = new ArrayList<>();
         SQLiteDatabase db = new SQLiteHelper(context).getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT SHEET_FILE, SHEET_TITLE, COMPOSER FROM SHEET", null);
+
+        Cursor cursor = db.rawQuery("SELECT SHEET_FILE, SHEET_TITLE, COMPOSER FROM SHEET WHERE UPLOAD_USER = '" + user + "';", null);
 
         // 커서가 열 이름 목록을 포함하고 있는지 확인
         String[] columnNames = cursor.getColumnNames();

@@ -433,7 +433,6 @@ public class OpenCVtestActivity extends AppCompatActivity {
                     }
                 }
             }
-            // 정작 인식한 객체를 그리는 코드가 없더라구요... 아마 그래서 안된게 아닌가 싶습니다 :)
             // image에 양 지점 포인터 영역에 해당하는 컨투어 그리기 (두께 자유)
             Imgproc.rectangle(image, testRect.tl(), testRect.br(), new Scalar(255, 0, 0), 2);
             // test용 출력

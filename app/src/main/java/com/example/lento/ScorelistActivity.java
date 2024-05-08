@@ -55,7 +55,7 @@ public class ScorelistActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
         // 악보 데이터 가져와서 RecyclerView에 설정
-        setupRecyclerView();
+        setupRecyclerView(user);
 
 
     }
@@ -63,8 +63,10 @@ public class ScorelistActivity extends AppCompatActivity {
     }
     private int getSheetMusicCount(String user) {
         // 유저 확인
+        /*
         CurrentUser Currentuser = (CurrentUser)getApplicationContext();
         user = Currentuser.getCurrentUser();
+         */
 
         String countQuery = "SELECT COUNT(*) FROM SHEET WHERE UPLOAD_USER = '" + user + "';";
         Cursor cursor = db.rawQuery(countQuery, null);
@@ -74,13 +76,13 @@ public class ScorelistActivity extends AppCompatActivity {
         return count;
     }
 
-    private void setupRecyclerView() {
+    private void setupRecyclerView(String user) {
         // SQLiteHelper 객체 생성
         DBManager dbManager = new DBManager(this);
         //SQLiteHelper dbHelper = new SQLiteHelper(this);
 
         // 악보 데이터 가져오기
-        List<Score> scoreList = dbManager.getScores();
+        List<Score> scoreList = dbManager.getScores(user);
         //List<Score> scoreList = dbHelper.getScores();
 
         // Adapter 설정

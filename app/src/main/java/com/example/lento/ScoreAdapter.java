@@ -42,6 +42,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         Score score = scoreList.get(position);
         holder.sheetTitle.setText(score.getTitle());
         holder.sheetComposer.setText(score.getComposer());
@@ -54,8 +55,10 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
             String pdfUriString = score.getImagePath();
             Uri pdfUri = Uri.parse(pdfUriString);
             String filePath = getRealPathFromURI(pdfUri); // URI를 실제 파일 경로로 변환
+
             if (filePath != null) {
                 File file = new File(filePath);
+                //Uri file = pdfUri;  // test코드
                 ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
                 if (parcelFileDescriptor != null) {
                     PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
@@ -131,11 +134,13 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
                     filePath = cursor.getString(index);
                 }
             } catch (Exception e) {
+                Log.d("test", "예외처리");
                 e.printStackTrace();
             }
         } else if (uri.getScheme().equals("file")) {
             filePath = uri.getPath();
         }
+        Log.d("test", "함수종료");
         return filePath;
     }
 }
