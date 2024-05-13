@@ -52,35 +52,25 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
 
         // PDF 파일을 비트맵으로 변환하여 이미지뷰에 설정
         try {
-            String pdfUriString = score.getImagePath();
-            Uri pdfUri = Uri.parse(pdfUriString);
-            String filePath = getRealPathFromURI(pdfUri); // URI를 실제 파일 경로로 변환
-
-            if (filePath != null) {
-                File file = new File(filePath);
-                //Uri file = pdfUri;  // test코드
-                ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-                if (parcelFileDescriptor != null) {
-                    PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
-                    if (renderer.getPageCount() > 0) {
-                        PdfRenderer.Page page = renderer.openPage(0);
-                        Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
-                        bitmap.eraseColor(Color.WHITE); // 비트맵을 흰색으로 초기화
-                        page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-                        // 비트맵 출력
-                        Log.d("BitmapInfo", "Bitmap size: " + bitmap.getWidth() + " x " + bitmap.getHeight());
-                        holder.sheetImage.setImageBitmap(bitmap);
-                        page.close();
-                    } else {
-                        Log.e("PDF_LOAD", "PDF 파일의 페이지 수가 0입니다.");
-                    }
-                    renderer.close();
-                    parcelFileDescriptor.close();
+            File file = new File(score.getImagePath());
+            ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+            if (parcelFileDescriptor != null) {
+                PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
+                if (renderer.getPageCount() > 0) {
+                    PdfRenderer.Page page = renderer.openPage(0);
+                    Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+                    bitmap.eraseColor(Color.WHITE); // 비트맵을 흰색으로 초기화
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+                    holder.sheetImage.setImageBitmap(bitmap);
+                    page.close();
+                    Log.d("PDF_LOAD", "비트맵 생성 및 이미지뷰 설정 완료");
                 } else {
-                    Log.e("PDF_LOAD", "ParcelFileDescriptor가 null입니다.");
+                    Log.e("PDF_LOAD", "PDF 파일의 페이지 수가 0입니다.");
                 }
+                renderer.close();
+                parcelFileDescriptor.close();
             } else {
-                Log.e("PDF_LOAD", "파일 경로가 null입니다.");
+                Log.e("PDF_LOAD", "ParcelFileDescriptor가 null입니다.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,27 +110,5 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
             sheetImage = itemView.findViewById(R.id.sheet_image);
         }
     }
-    // content URI를 실제 파일 경로로 변환하는 메서드
-    private String getRealPathFromURI(Uri uri) {
-        String filePath = null;
-        if (uri == null) {
-            return null;
-        }
-        if (uri.getScheme().equals("content")) {
-            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
-                if (cursor != null) {
-                    cursor.moveToFirst();
-                    int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-                    filePath = cursor.getString(index);
-                }
-            } catch (Exception e) {
-                Log.d("test", "예외처리");
-                e.printStackTrace();
-            }
-        } else if (uri.getScheme().equals("file")) {
-            filePath = uri.getPath();
-        }
-        Log.d("test", "함수종료");
-        return filePath;
-    }
+
 }

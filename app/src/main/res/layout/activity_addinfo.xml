@@ -14,7 +14,7 @@
         android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="90dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -36,6 +36,7 @@
         android:orientation="vertical">
 
         <ImageView
+            android:background="@drawable/rounded_scoreimage"
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="300dp"/>
@@ -49,7 +50,7 @@
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
-        android:background="#E8E8E8">
+        android:background="@drawable/rounded_back">
 
         <TextView
             android:layout_width="wrap_content"
@@ -193,12 +194,13 @@
 
         <Button
             android:id="@+id/addsheet"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="50dp"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="30dp"
             android:layout_marginBottom="1dp"
             android:layout_gravity="center_vertical"
             android:text="내 악보에 추가"
+            android:textSize="15sp"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:background="@drawable/rounded_button"/>

@@ -95,7 +95,10 @@ public class MainActivity extends AppCompatActivity {
                         // 완료 토스트 메시지
                         Toast.makeText(getApplicationContext(), "로그인되었습니다.", Toast.LENGTH_SHORT).show();
                         // 화면 전환
-                        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                        //Initialchell1Activity.class로 초기 챌린지 설정해야하는데 테스트하기 번거로워서 일단 홈화면으로
+                        Intent intent = new Intent(MainActivity.this, Initialchell1Activity.class);
+                        //Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                        intent.putExtra("userEmail", input_email);
                         startActivity(intent);
                     }
                 }

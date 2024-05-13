@@ -27,6 +27,33 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Initialchell1Activity"
+            android:label="Initialchell1Activity 액티비티"/>
+        <activity
+            android:name=".Initialchell2Activity"
+            android:label="Initialchell2Activity 액티비티"/>
+        <activity
+            android:name=".ChellengeActivity"
+            android:label="ChellengeActivity 액티비티"/>
+        <activity
+            android:name=".IngFragment"
+            android:label="IngFragment 액티비티"/>
+        <activity
+            android:name=".EndFragment"
+            android:label="EndFragment 액티비티"/>
+        <activity
+            android:name=".MyChallengeFragment"
+            android:label="MyChallengeFragment 액티비티"/>
+        <activity
+            android:name=".PracticeNoteFragment"
+            android:label="PracticeNoteFragment 액티비티"/>
+        <activity
+            android:name=".StatisticsFragment"
+            android:label="StatisticsFragment 액티비티"/>
+        <activity
+            android:name=".MypageActivity"
+            android:label="MypageActivity 액티비티"/>
+        <activity
             android:name=".ScoreDetailActivity"
             android:label="ScoreDetail 액티비티"/>
         <activity

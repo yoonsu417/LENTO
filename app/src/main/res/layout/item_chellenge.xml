@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true"
+    app:cardBackgroundColor="#96AAFF"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        >
+
+        <TextView
+            android:id="@+id/categoryTextView"
+            android:text="연습목표"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11dp"
+            android:background="@drawable/chellengecard"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:layout_marginLeft="15dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_alignParentStart="true"/>
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:text="하루에 2시간 연습"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/categoryTextView"
+            android:textSize="22dp"
+            android:textStyle="bold"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/white"
+            android:layout_marginTop="2dp"
+            android:layout_alignParentStart="true"/>
+
+        <TextView
+            android:id="@+id/dateTextView"
+            android:text="2024.05.14 ~ 2024.06.14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/titleTextView"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_marginTop="22dp"
+            android:layout_marginLeft="15dp"
+            android:layout_alignParentStart="true"/>
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/mypic2"
+            android:layout_marginEnd="20dp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="73dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginEnd="16dp"
+            android:layout_toEndOf="@id/dateTextView" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

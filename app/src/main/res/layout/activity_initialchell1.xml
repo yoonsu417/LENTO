@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="챌린지를 설정해 볼까요?"
+        android:layout_gravity="center"
+        android:textSize="28dp"
+        android:textColor="#3e3e3e"
+        android:fontFamily="@font/suite_semibold"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="설정한 챌린지로 의지를 불태워봐요!"
+        android:layout_gravity="center"
+        android:textSize="15dp"
+        android:textColor="#3e3e3e"
+        android:fontFamily="@font/suite_medium"/>
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="25dp"
+        android:src="@drawable/chellchar" />
+
+    <ImageView
+        android:id="@+id/on11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-5dp"
+        android:src="@drawable/chellgroup" />
+    <Button
+        android:id="@+id/chellset"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:text="챌린지 설정하기"
+        android:textSize="17sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_button"
+        android:radius="15dp"/>
+
+</LinearLayout>

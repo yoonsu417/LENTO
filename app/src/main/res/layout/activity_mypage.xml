@@ -1,6 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#EEEFF3">
+    <LinearLayout
+        android:id="@+id/member_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#EEEFF3"
+        android:paddingBottom="50dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/mypagee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="마이페이지"
+                android:textColor="#3E3E3E"
+                android:textSize="23dp"
+                android:textStyle="bold" />
 
-</LinearLayout>
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="36dp"
+                android:layout_marginEnd="35dp"
+                android:src="@drawable/setting" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="55dp">
+            <ImageView
+                android:id="@+id/mypic"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:src="@drawable/mypic3"
+                android:layout_marginLeft="40dp"/>
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_alignLeft="@+id/mypic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="12dp"
+                android:layout_marginLeft="140dp"
+                android:fontFamily="@font/suite_bold"
+                android:text="이하늘"
+                android:textColor="#3E3E3E"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/mypic"
+                android:layout_below="@id/name"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="0dp"
+                android:layout_marginLeft="140dp"
+                android:fontFamily="@font/suite_medium"
+                android:text="Ihn5656@naver.com"
+                android:textSize="14dp" />
+            <Button
+                android:id="@+id/logoutBt"
+                android:layout_width="200dp"
+                android:layout_height="35dp"
+                android:layout_below="@id/email"
+                android:layout_alignParentEnd="true"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="41dp"
+                android:background="@drawable/rounded_button"
+                android:text="로그아웃"
+                android:textColor="#FFFFFF"
+                android:textSize="13dp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_below="@id/member_info_layout"
+            android:background="@drawable/rounded_mypage_tap">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                app:tabIndicatorColor="#4D5C84"
+                app:tabIndicatorHeight="4dp"
+                app:tabTextAppearance="@style/MyTabTextStyle"
+                android:fontFamily="@font/suite_bold"/>
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/tab_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+    <include
+        android:id="@+id/bottom_mypage"
+        layout="@layout/bottom_mypage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_alignParentBottom="true" />
+
+
+
+</RelativeLayout>

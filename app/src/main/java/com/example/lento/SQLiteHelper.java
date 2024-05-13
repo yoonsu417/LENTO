@@ -54,7 +54,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS CHALLENGE (" +
                 "CODE INTEGER NOT NULL PRIMARY KEY," +
                 "ENROLL_USER TEXT NOT NULL," +
+                "CATEGORY TEXT NOT NULL," +
                 "TITLE TEXT NOT NULL," +
+                "STARTDATE DATE NOT NULL," +
                 "DEADLINE DATE NOT NULL," +
                 "COMPLETE INTEGER DEFAULT 0," +     // "
                 "FOREIGN KEY (ENROLL_USER) REFERENCES USER (EMAIL) " +

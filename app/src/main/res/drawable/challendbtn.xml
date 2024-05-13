@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#334D5C84"/>
+    <corners android:radius="60dp"/> <!-- 버튼의 배경색을 원하는 색상으로 변경 -->
+</shape>
