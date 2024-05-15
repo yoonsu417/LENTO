@@ -136,14 +136,56 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
 
         // 6. 객체 분석
+        Pair<Mat, List<Object[]>> analysis = objectAnalysis(detectionImage, detectionObjects);
+        Mat analysisImage = analysis.first;
+        List<Object[]> analysisObjects = analysis.second;
+        System.out.println("객체 분석 후"); //확인 용도(Logcat)
+        System.out.println("방향 포함 출력"); // 확인 용도 (Logcat)
+        for (Object[] obj : analysisObjects) {
+            int[] stats = (int[]) obj[1];
+            int x = stats[0];
+            int y = stats[1];
+            int w = stats[2];
+            int h = stats[3];
+            int area = stats[4];
+
+            List<int[]> stems = (List<int[]>) obj[2];
+            if (stems.size() > 0) {
+                int numberOfStems = stems.size();
+                put_text(analysisImage, String.valueOf(numberOfStems), new Point(x, y + h + 20));
+
+                // 보표
+                System.out.print("[" + obj[0] + ", ");
+
+                // 객체
+                int[] intArray = (int[]) obj[1];
+                System.out.print(Arrays.toString(intArray) + ", ");
+
+                //직선
+                List<int[]> stemList = (List<int[]>) obj[2];
+                System.out.print("[");
+                for (int i = 0; i < stemList.size(); i++) {
+                    int[] stem = stemList.get(i);
+                    System.out.print(Arrays.toString(stem));
+                    if (i < stemList.size() - 1) {
+                        System.out.print(", ");
+                    }
+                }
+                System.out.print("], ");
+
+                // 방향
+                boolean direction = (boolean) obj[3];
+                System.out.println(direction + "]");;
 
 
+            }
+        }
 
 
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
-        Bitmapimage = Bitmap.createBitmap(detectionImage.cols(), detectionImage.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(detectionImage, Bitmapimage);
+        Bitmapimage = Bitmap.createBitmap(analysisImage.cols(), analysisImage.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(analysisImage, Bitmapimage);
 
         // 비트맵 이미지 화면 출력
         OpenCVtest.setImageBitmap(Bitmapimage);
@@ -182,8 +224,6 @@ public class OpenCVtestActivity extends AppCompatActivity {
         Imgproc.putText(image, text, loc, Imgproc.FONT_HERSHEY_SIMPLEX, fontScale, color, thickness);
     }
 
-    final boolean VERTICAL = true;
-    final boolean HORIZONTAL = false;
 
     public static List<int[]> getLine(Mat image, boolean axis, int axis_value, int start, int end, int length){
 
@@ -226,13 +266,54 @@ public class OpenCVtestActivity extends AppCompatActivity {
         return new ArrayList<>(List.of(new int[]{axis? y: x, pixels}));
     }
 
-    /*
+
     // 기둥 검출 함수
     public static List<int[]> stemDetection(Mat image, int[] stats, int length){
+        final boolean VERTICAL = true;
+        final boolean HORIZONTAL = false;
 
+        int x = stats[0];
+        int y = stats[1];
+        int w = stats[2];
+        int h = stats[3];
+        int area = stats[4];
+
+        List<int[]> stems = new ArrayList<>();
+
+        for(int col = x; col<x+w; col++){
+            List<int[]> lineInfo = getLine(image,VERTICAL, col, y, y + h, length);
+            int end = lineInfo.get(0)[0];
+            int pixels = lineInfo.get(0)[1];
+
+            if(pixels > 0){
+                if (stems.isEmpty() || Math.abs(stems.get(stems.size() - 1)[0] + stems.get(stems.size() - 1)[2] - col) >= 1) {
+                    int[] stem = new int[]{col, end - pixels + 1, 1, pixels};
+                    stems.add(stem);
+                } else {
+                    stems.get(stems.size() - 1)[2]++;
+                }
+            }
+        }
+
+        return stems;
     }
 
-     */
+public static int count_rect_pixels(Mat image, int[] rect){
+    int x = rect[0];
+    int y = rect[1];
+    int w = rect[2];
+    int h = rect[3];
+    int pixels = 0;
+    for (int row = y; row < y + h; row++) {
+        for (int col = x; col < x + w; col++) {
+            double[] pixelValue = image.get(row, col);
+            if (pixelValue[0] == 255) {
+                pixels++;
+            }
+        }
+    }
+    return pixels;
+}
 
 
 
@@ -343,12 +424,12 @@ public class OpenCVtestActivity extends AppCompatActivity {
     public static Pair<Mat, List<Object[]>> objectDetection(Mat image, List<double[]> staves) {
         int lines = (int) Math.ceil(staves.size() / 5.0);
         List<Object[]> objects = new ArrayList<>();
-        Mat closeImage = closing(image);
+        //Mat closeImage = closing(image);
 
         Mat labels = new Mat();
         Mat stats = new Mat();
         Mat centroids = new Mat();
-        int cnt = Imgproc.connectedComponentsWithStats(closeImage, labels, stats, centroids);
+        int cnt = Imgproc.connectedComponentsWithStats(image, labels, stats, centroids);
 
         for(int i = 1; i< cnt; i++){
             int x = (int) stats.get(i, 0)[0];
@@ -361,8 +442,8 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 for (int line = 0; line < lines; line++) {
                     double areaTop = staves.get(line * 5)[0] - getWeighted(20);
                     double areaBot = staves.get((line + 1) * 5 - 1)[0] + getWeighted(20);
-                    Rect rect = new Rect(x, y, w, h);
-                    Imgproc.rectangle(image, rect, new Scalar(255, 0, 0), 1);
+                    //Rect rect = new Rect(x, y, w, h);
+                    //Imgproc.rectangle(image, rect, new Scalar(255, 0, 0), 1);
 
                     if (areaTop <= center && center <= areaBot) {
                         objects.add(new Object[]{line, new int[]{x, y, w, h, (int) area}});
@@ -396,55 +477,28 @@ public class OpenCVtestActivity extends AppCompatActivity {
     }
 
 
+    public static Pair<Mat, List<Object[]>> objectAnalysis(Mat image, List<Object[]> objects) {
+        List<Object[]> updatedObjects = new ArrayList<>();
+        for (Object[] obj : objects) {
+            int[] stats = (int[]) obj[1];
+            List<int[]> stems = stemDetection(image, stats, 30); // 객체 내의 모든 직선들을 검출함
+            Object[] updatedObj = new Object[4];
+            System.arraycopy(obj, 0, updatedObj, 0, obj.length); // 이전 객체의 내용을 새로운 배열에 복사
+            updatedObj[2] = stems; // 새로운 배열에 직선 리스트를 추가
 
-    /*
-
-    // 5. 객체 검출 + 표시
-    public static dPair<Mat, List<dPair<Integer, Rect>>> objectDetection(Mat image, List<int[]> staves) {
-        int lines = (int) Math.ceil(staves.size() / 5.0);
-        List<dPair<Integer, Rect>> objects = new ArrayList<>();
-
-
-        Mat closingImage = new Mat();
-        Imgproc.morphologyEx(image, closingImage, Imgproc.MORPH_CLOSE, new Mat());
-        Mat labels = new Mat();
-        Mat stats = new Mat();
-        Mat centroids = new Mat();
-        int cnt = Imgproc.connectedComponentsWithStats(closingImage, labels, stats, centroids);
-
-        // 모든 객체 검출
-        for (int i = 1; i < cnt; i++) {
-            double x = stats.get(i, 0)[0];
-            double y = stats.get(i, 1)[0];
-            double w = stats.get(i, 2)[0];
-            double h = stats.get(i, 3)[0];
-            double area = stats.get(i, 4)[0];
-
-            Rect testRect = new Rect((int) x, (int) y, (int) w, (int) h);
-
-            if (w >= getWeighted(5) && h >= getWeighted(5)) {
-                double center = getCenter(y, h);
-                for (int line = 0; line < lines; line++) {
-                    double areaTop = staves.get(line * 5)[0] - getWeighted(20);
-                    double areaBot = staves.get((line + 1) * 5 - 1)[0] + getWeighted(20);
-
-                    if (areaTop <= center && center <= areaBot) {
-                        objects.add(new dPair<>(line, testRect));
-                    }
+            boolean direction = false;
+            if (stems.size() > 0) { // 직선이 1개 이상 존재함
+                if (stems.get(0)[0] - stats[0] >= getWeighted(5)) { // 직선이 나중에 발견되면
+                    direction = true; // 정 방향 음표
+                } else { // 직선이 일찍 발견되면
+                    direction = false; // 역 방향 음표
                 }
             }
-            // image에 양 지점 포인터 영역에 해당하는 컨투어 그리기 (두께 자유)
-            Imgproc.rectangle(image, testRect.tl(), testRect.br(), new Scalar(255, 0, 0), 2);
-            // test용 출력
-            //System.out.print(x);    System.out.print(y);    System.out.print(w);    System.out.println(h);
+            updatedObj[3] = direction;
+            updatedObjects.add(updatedObj); // 객체 배열에 음표 방향을 추가
 
         }
-
-        Collections.sort(objects, (a, b) -> a.getFirst().compareTo(b.getFirst()));
-
-
-        return new dPair<>(image, objects);
+        return new Pair<>(image, updatedObjects);
     }
 
- */
 }
