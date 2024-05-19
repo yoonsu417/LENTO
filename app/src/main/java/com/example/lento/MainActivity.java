@@ -89,9 +89,30 @@ public class MainActivity extends AppCompatActivity {
                         loginCheckCS.close();
                         db.close();
 
+                        // 챌린지 여부 확인
+                        boolean hasChallenge = checkForChallenge(input_email);
+
                         // 로그인한 유저 전역변수 설정
                         CurrentUser user = (CurrentUser)getApplicationContext();
                         user.setCurrentUser(input_email);
+
+                        // 회원가입하고 제일 처음만 강제 챌린지 설정
+                        Intent intent;
+                        if (hasChallenge) {
+                            intent = new Intent(MainActivity.this, HomeActivity.class);
+                            Toast.makeText(getApplicationContext(), "로그인되었습니다.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            intent = new Intent(MainActivity.this, Initialchell1Activity.class);
+                        }
+                        intent.putExtra("userEmail", input_email);
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
+    }
+    /*
+                        // 이전 코드
                         // 완료 토스트 메시지
                         Toast.makeText(getApplicationContext(), "로그인되었습니다.", Toast.LENGTH_SHORT).show();
                         // 화면 전환
@@ -100,23 +121,13 @@ public class MainActivity extends AppCompatActivity {
                         //Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                         intent.putExtra("userEmail", input_email);
                         startActivity(intent);
-                    }
-                }
-            }
-        });
 
-
-
-
-        // 이전 로그인 버튼
-        /*
-        loginBt.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                startActivity(intent);
-            }
-        });
-        */
-
+     */
+    private boolean checkForChallenge(String email) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor challengeCursor = db.rawQuery("SELECT * FROM CHALLENGE WHERE ENROLL_USER = '" + email + "'", null);
+        boolean hasChallenge = challengeCursor.getCount() > 0;
+        challengeCursor.close();
+        return hasChallenge;
     }
 }
