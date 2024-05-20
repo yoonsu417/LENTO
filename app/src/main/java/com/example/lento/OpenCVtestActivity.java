@@ -3,36 +3,27 @@ package com.example.lento;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Pair;
 import android.widget.ImageView;
 import android.util.Log;
 
-import java.sql.SQLOutput;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.IntStream;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Core;
-import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.android.OpenCVLoader;
-
-import android.view.View;
 
 
 public class OpenCVtestActivity extends AppCompatActivity {
@@ -119,7 +110,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
         System.out.println("정규화 후 오선 좌표");
         for (double[] stave : normalizedStaves) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
-            System.out.println(Arrays.toString(stave));
+            System.out.print(Arrays.toString(stave) + ", ");
         }
 
 
@@ -152,7 +143,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
             List<int[]> stems = (List<int[]>) obj[2];
             if (stems.size() > 0) {
                 int numberOfStems = stems.size();
-                put_text(analysisImage, String.valueOf(numberOfStems), new Point(x, y + h + 20));
+                //put_text(analysisImage, String.valueOf(numberOfStems), new Point(x, y + h + 20));
 
                 // 보표
                 System.out.print("[" + obj[0] + ", ");
@@ -175,17 +166,23 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
                 // 방향
                 boolean direction = (boolean) obj[3];
-                System.out.println(direction + "]");;
-
+                System.out.println(direction + "]");
+                ;
 
             }
+
         }
+
+        // 7. 조표 인식
+        RecognitionResult rcResult = recognition(analysisImage, normalizedStaves, analysisObjects);
+        Mat recognitionImage = rcResult.getImage();
+        System.out.println("key = " + rcResult.getKey());
 
 
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
-        Bitmapimage = Bitmap.createBitmap(analysisImage.cols(), analysisImage.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(analysisImage, Bitmapimage);
+        Bitmapimage = Bitmap.createBitmap(recognitionImage.cols(), recognitionImage.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(recognitionImage, Bitmapimage);
 
         // 비트맵 이미지 화면 출력
         OpenCVtest.setImageBitmap(Bitmapimage);
@@ -193,22 +190,15 @@ public class OpenCVtestActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
-
     // ---------------------------------------- funtions ------------------------------------------
 
     private static int getWeighted(int value) {
         int standard = 10;
-        return (int)(value * (standard / 10));
+        return (int) (value * (standard / 10));
     }
 
     private static double getCenter(int y, int h) {
-        return ( y + y + h ) / 2;
+        return (y + y + h) / 2;
     }
 
     public static Mat closing(Mat image) {
@@ -217,7 +207,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
         return image;
     }
 
-    public static void put_text(Mat image, String text, Point loc){
+    public static void put_text(Mat image, String text, Point loc) {
         double fontScale = 0.6;
         int thickness = 2;
         Scalar color = new Scalar(255, 0, 0);
@@ -225,18 +215,18 @@ public class OpenCVtestActivity extends AppCompatActivity {
     }
 
 
-    public static List<int[]> getLine(Mat image, boolean axis, int axis_value, int start, int end, int length){
+    public static List<int[]> getLine(Mat image, boolean axis, int axis_value, int start, int end, int length) {
 
         List<int[]> points = new ArrayList<>();
 
         // 수직이면
         if (axis) {
-            for(int i = start; i < end; i++){
+            for (int i = start; i < end; i++) {
                 int[] point = {i, axis_value};
                 points.add(point);
             }
-        }else{
-            for(int i = start; i< end; i++){
+        } else {
+            for (int i = start; i < end; i++) {
                 int[] point = {axis_value, i};
                 points.add(point);
             }
@@ -244,31 +234,31 @@ public class OpenCVtestActivity extends AppCompatActivity {
         int pixels = 0;
         int y = 0;
         int x = 0;
-        for(int i = 0; i<points.size(); i++){
+        for (int i = 0; i < points.size(); i++) {
             int[] point = points.get(i);
             y = point[0];
             x = point[1];
-            pixels += (image.get(y,x)[0] == 255) ? 1 : 0; //흰색 픽셀 개수
+            pixels += (image.get(y, x)[0] == 255) ? 1 : 0; //흰색 픽셀 개수
 
             int next_y = axis ? y + 1 : y;
             int next_x = axis ? x : x + 1;
-            int next_point = (int)image.get(next_y, next_x)[0];  // 다음 탐색할 지점
+            int next_point = (int) image.get(next_y, next_x)[0];  // 다음 탐색할 지점
 
-            if(next_point == 0 || i == points.size() - 1){
-                if (pixels >= getWeighted(length)){
+            if (next_point == 0 || i == points.size() - 1) {
+                if (pixels >= getWeighted(length)) {
                     break;
-                }else{
+                } else {
                     pixels = 0;
                 }
             }
         }
 
-        return new ArrayList<>(List.of(new int[]{axis? y: x, pixels}));
+        return new ArrayList<>(List.of(new int[]{axis ? y : x, pixels}));
     }
 
 
     // 기둥 검출 함수
-    public static List<int[]> stemDetection(Mat image, int[] stats, int length){
+    public static List<int[]> stemDetection(Mat image, int[] stats, int length) {
         final boolean VERTICAL = true;
         final boolean HORIZONTAL = false;
 
@@ -280,12 +270,12 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
         List<int[]> stems = new ArrayList<>();
 
-        for(int col = x; col<x+w; col++){
-            List<int[]> lineInfo = getLine(image,VERTICAL, col, y, y + h, length);
+        for (int col = x; col < x + w; col++) {
+            List<int[]> lineInfo = getLine(image, VERTICAL, col, y, y + h, length);
             int end = lineInfo.get(0)[0];
             int pixels = lineInfo.get(0)[1];
 
-            if(pixels > 0){
+            if (pixels > 0) {
                 if (stems.isEmpty() || Math.abs(stems.get(stems.size() - 1)[0] + stems.get(stems.size() - 1)[2] - col) >= 1) {
                     int[] stem = new int[]{col, end - pixels + 1, 1, pixels};
                     stems.add(stem);
@@ -298,33 +288,22 @@ public class OpenCVtestActivity extends AppCompatActivity {
         return stems;
     }
 
-public static int count_rect_pixels(Mat image, int[] rect){
-    int x = rect[0];
-    int y = rect[1];
-    int w = rect[2];
-    int h = rect[3];
-    int pixels = 0;
-    for (int row = y; row < y + h; row++) {
-        for (int col = x; col < x + w; col++) {
-            double[] pixelValue = image.get(row, col);
-            if (pixelValue[0] == 255) {
-                pixels++;
+    public static int count_rect_pixels(Mat image, int[] rect) {
+        int x = rect[0];
+        int y = rect[1];
+        int w = rect[2];
+        int h = rect[3];
+        int pixels = 0;
+        for (int row = y; row < y + h; row++) {
+            for (int col = x; col < x + w; col++) {
+                double[] pixelValue = image.get(row, col);
+                if (pixelValue[0] == 255) {
+                    pixels++;
+                }
             }
         }
+        return pixels;
     }
-    return pixels;
-}
-
-
-
-
-
-
-
-
-
-
-
 
 
     // -------------------------------------  Modules ---------------------------------------------
@@ -346,7 +325,7 @@ public static int count_rect_pixels(Mat image, int[] rect){
             }
             if (pixels >= width * 0.5) { // 이미지 너비의 50% 이상이라면
                 if (staves.isEmpty() || Math.abs(staves.get(staves.size() - 1)[0] + staves.get(staves.size() - 1)[1] - row) > 1) { // 첫 오선이거나 이전에 검출된 오선과 다른 오선
-                    staves.add(new int[] {row, 0}); // 오선 추가 [오선의 y 좌표][오선 높이]
+                    staves.add(new int[]{row, 0}); // 오선 추가 [오선의 y 좌표][오선 높이]
                     /*
                     System.out.println("if 구문");
                     for (int[] stave : staves) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
@@ -377,9 +356,8 @@ public static int count_rect_pixels(Mat image, int[] rect){
                 }
             }
         }
-        return new Pair<>(image,staves);
+        return new Pair<>(image, staves);
     }
-
 
 
     // 4. 정규화
@@ -413,7 +391,7 @@ public static int count_rect_pixels(Mat image, int[] rect){
 
         List<double[]> normalizedStaves = new ArrayList<>();
         for (int[] staff : staves) {
-            normalizedStaves.add(new double[]{(staff[0] * weight),(staff[1] * weight)});
+            normalizedStaves.add(new double[]{(staff[0] * weight), (staff[1] * weight)});
         }
 
         return new Pair<>(resizedImage, normalizedStaves);
@@ -431,7 +409,7 @@ public static int count_rect_pixels(Mat image, int[] rect){
         Mat centroids = new Mat();
         int cnt = Imgproc.connectedComponentsWithStats(image, labels, stats, centroids);
 
-        for(int i = 1; i< cnt; i++){
+        for (int i = 1; i < cnt; i++) {
             int x = (int) stats.get(i, 0)[0];
             int y = (int) stats.get(i, 1)[0];
             int w = (int) stats.get(i, 2)[0];
@@ -460,7 +438,7 @@ public static int count_rect_pixels(Mat image, int[] rect){
 
              */
 
-}
+        }
 
             /*
             System.out.println("정렬 전");
@@ -477,6 +455,7 @@ public static int count_rect_pixels(Mat image, int[] rect){
     }
 
 
+    // 6. 객체 분석
     public static Pair<Mat, List<Object[]>> objectAnalysis(Mat image, List<Object[]> objects) {
         List<Object[]> updatedObjects = new ArrayList<>();
         for (Object[] obj : objects) {
@@ -501,4 +480,228 @@ public static int count_rect_pixels(Mat image, int[] rect){
         return new Pair<>(image, updatedObjects);
     }
 
+
+    // 7. 조표 인식
+    public static RecognitionResult recognition(Mat image, List<double[]> staves, List<Object[]> objects) {
+        int key = 0;
+        boolean time_signature = false;
+        List<int[]> beats = new ArrayList<>();
+        List<int[]> pitches = new ArrayList<>();
+
+        for (int i = 1; i < objects.size(); i++) {
+            Object[] obj = objects.get(i);
+            int line = (int) obj[0];
+            int[] stats = (int[]) obj[1];
+            List<int[]> stems = (List<int[]>) obj[2];
+            boolean direction = (boolean) obj[3];
+
+            int x = (int) stats[0];
+            int y = (int) stats[1];
+            int w = (int) stats[2];
+            int h = (int) stats[3];
+            int area = (int) stats[4];
+            double[] staff = new double[5];
+            for (int j = line * 5; j < line * 5 + 5; j++) {
+                staff[j - line * 5] = staves.get(j)[0];
+            }
+
+
+            if (!time_signature) {
+                Object[] result = recognizeKey(image, staff, stats);
+                time_signature = (boolean) result[0];
+                int temp_key = (int) result[1];
+                key += temp_key;
+            } else {
+                recognize_note(image, staff, stats, stems, direction);
+            }
+
+            Imgproc.rectangle(image, new Point(x, y), new Point(x + w, y + h), new Scalar(255, 0, 0), 1);
+            put_text(image, String.valueOf(i), new Point(x, y - getWeighted(30)));
+
+        }
+        return new RecognitionResult(image, key, beats, pitches);
+    }
+
+
+    // --------------------------- recognition Modules --------------------------
+
+    public static Object[] recognizeKey(Mat image, double[] staves, int[] stats) {
+        int x = stats[0], y = stats[1], w = stats[2], h = stats[3], area = stats[4];
+
+        boolean tsConditions = (
+                (staves[0] + getWeighted(5) >= y && y >= staves[0] - getWeighted(5)) && // 상단 위치 조건
+                        (staves[4] + getWeighted(5) >= y + h && y + h >= staves[4] - getWeighted(5)) && // 하단 위치 조건
+                        (staves[2] + getWeighted(5) >= getCenter(y, h) && getCenter(y, h) >= staves[2] - getWeighted(5)) && // 중단 위치 조건
+                        (getWeighted(18) >= w && w >= getWeighted(10)) && // 넓이 조건
+                        (getWeighted(45) >= h && h >= getWeighted(35)) // 높이 조건
+        );
+
+        if (tsConditions) { // 박자표 조건이 맞으면
+            return new Object[]{true, 0}; // true는 박자표, 0은 조표 없음
+        } else { // 박자표가 아니고 조표가 있는 경우
+            List<int[]> stems = stemDetection(image, stats, 20); // 음표 기둥 확인 (기둥의 x, y, w, h 배열 반환)
+            int key;
+            if (stems.get(0)[0] - x >= getWeighted(3)) { // 직선이 나중에 발견되면
+                key = 10 * stems.size() / 2; // 샾 (10)
+            } else { // 직선이 일찍 발견되면
+                key = 100 * stems.size(); // 플랫 (100)
+            }
+
+            return new Object[]{false, key}; // false는 박자표 아님, key는 계산된 조표
+        }
+    }
+
+    public static void recognize_note(Mat image, double[] staff, int[] stats, List<int[]> stems, boolean direction) {
+        int x = stats[0];
+        int y = stats[1];
+        int w = stats[2];
+        int h = stats[3];
+        int area = stats[4];
+
+        // 넓이, 높이, 픽셀 수 확인 (최소 10, 35, 120)
+        //put_text(image, String.valueOf(w), new Point(x, y + h + getWeighted(30)));
+        //put_text(image, String.valueOf(h), new Point(x, y + h + getWeighted(70)));
+        //put_text(image, String.valueOf(count_rect_pixels(image,new int[]{x,y,w,h})), new Point(x, y + h + getWeighted(95)));
+
+        List<int[]> notes = new ArrayList<>();
+        List<int[]> pitches = new ArrayList<>();
+
+        boolean noteCondition = (
+                !stems.isEmpty() &&
+                        w >= getWeighted(10) &&  // 넓이 조건
+                        h >= getWeighted(35) &&  // 높이 조건
+                        area >= getWeighted(95)  // 픽셀 갯수 조건
+        );
+
+        if (noteCondition) {
+            for (int[] stem : stems) {
+                NoteHeadResult rcResult = recongnize_note_head(image, stem, direction);
+                boolean headExist = rcResult.isHeadExist();
+                boolean headFill = rcResult.isHeadFill();
+                int headCenter = rcResult.getHeadCenter();
+
+                put_text(image, String.valueOf(headExist), new Point(x - getWeighted(10), y + h + getWeighted(20)));
+                put_text(image, String.valueOf(headFill), new Point(x - getWeighted(10), y + h + getWeighted(50)));
+
+            }
+        }
+    }
+
+    public static NoteHeadResult recongnize_note_head(Mat image, int[] stem, boolean direction) {
+        final boolean VERTICAL = true;
+        final boolean HORIZONTAL = false;
+
+        int x = stem[0];
+        int y = stem[1];
+        int w = stem[2];
+        int h = stem[3];
+
+        int areaTop, areaBot, areaLeft, areaRight;
+
+        if (direction) {
+            areaTop = y + h - getWeighted(7);  // 음표 머리를 탐색할 위치 (상단)
+            areaBot = y + h + getWeighted(7);  // 음표 머리를 탐색할 위치 (하단)
+            areaLeft = x - getWeighted(14);  // 음표 머리를 탐색할 위치 (좌측)
+            areaRight = x;  // 음표 머리를 탐색할 위치 (우측)
+        } else {  // 역 방향 음표
+            areaTop = y - getWeighted(7);  // 음표 머리를 탐색할 위치 (상단)
+            areaBot = y + getWeighted(7);  // 음표 머리를 탐색할 위치 (하단)
+            areaLeft = x + w;  // 음표 머리를 탐색할 위치 (좌측)
+            areaRight = x + w + getWeighted(14);  // 음표 머리를 탐색할 위치 (우측)
+        }
+
+        //Imgproc.rectangle(image, new Point(areaLeft, areaTop), new Point(areaRight, areaBot), new Scalar(255, 0, 0), 1);
+
+        int cnt = 0;
+        int cntMax = 0;
+        int headCenter = 0;
+        int pixelCnt = count_rect_pixels(image, new int[]{areaLeft, areaTop, areaRight - areaLeft, areaBot - areaTop});
+
+        for (int row = areaTop; row < areaBot; row++) {
+            List<int[]> lineInfo = getLine(image, HORIZONTAL, row, areaLeft, areaRight, 5);
+            int end = lineInfo.get(0)[0];
+            int pixels = lineInfo.get(0)[1];
+            pixels += 1;
+
+            if (pixels > 0) {
+                cnt += 1;
+                cntMax = Math.max(cntMax, pixels);
+                headCenter += row;
+            }
+        }
+
+        //put_text(image, String.valueOf(cnt), new Point(x - getWeighted(10), y + h + getWeighted(30)));
+        //put_text(image, String.valueOf(cntMax), new Point(x - getWeighted(10), y + h + getWeighted(60)));
+        //put_text(image, String.valueOf(pixelCnt), new Point(x - getWeighted(10), y + h + getWeighted(90)));
+
+        boolean headExist = (cnt >= 3 && pixelCnt >= 50);
+        boolean headFill = (cnt >= 8 && cntMax >= 9 && pixelCnt >= 80);
+        if (cnt != 0) {
+            headCenter /= cnt;
+        } else {
+            headCenter = 0;
+        }
+
+        return new NoteHeadResult(headExist, headFill, headCenter);
+
+    }
+
+
+    // return 값 4개 처리 위한 클래스
+    public static class RecognitionResult {
+        private Mat image;
+        private int key;
+        private List<int[]> beats = new ArrayList<>();
+        private List<int[]> pitches = new ArrayList<>();
+
+        public RecognitionResult(Mat image, int key, List<int[]> beats, List<int[]> pitches) {
+            this.image = image;
+            this.key = key;
+            this.beats = beats;
+            this.pitches = pitches;
+        }
+
+        public Mat getImage() {
+            return image;
+        }
+
+        public int getKey() {
+            return key;
+        }
+
+        public List<int[]> getBeats() {
+            return beats;
+        }
+
+        public List<int[]> getPitches() {
+            return pitches;
+        }
+
+    }
+
+
+    // return 값 3개 처리 클래스
+    public static class NoteHeadResult {
+        boolean headExist;
+        boolean headFill;
+        int headCenter;
+
+        public NoteHeadResult(boolean headExist, boolean headFill, int headCenter) {
+            this.headExist = headExist;
+            this.headFill = headFill;
+            this.headCenter = headCenter;
+        }
+
+        public boolean isHeadExist() {
+            return headExist;
+        }
+
+        public boolean isHeadFill() {
+            return headFill;
+        }
+
+        public int getHeadCenter() {
+            return headCenter;
+        }
+    }
 }
