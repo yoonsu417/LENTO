@@ -30,6 +30,16 @@ public class ScoreDetailActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreinfo);
+        //정확도 표 클릭시 상세페이지
+        ImageView accuracy=findViewById(R.id.accuracy);
+        accuracy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent next2Intent = new Intent(ScoreDetailActivity.this, PerformProgressActivity.class);
+                startActivity(next2Intent);
+            }
+        });
+
 
         // 즐겨찾기 상태를 SharedPreferences에서 불러오기
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);

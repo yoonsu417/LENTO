@@ -27,6 +27,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".PerformProgressActivity"
+            android:label="PerformProgressActivity 액티비티"/>
+        <activity
             android:name=".Initialchell1Activity"
             android:label="Initialchell1Activity 액티비티"/>
         <activity

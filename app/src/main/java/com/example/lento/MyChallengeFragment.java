@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import androidx.fragment.app.Fragment;
 public class MyChallengeFragment extends Fragment {
     private boolean isFirstTime = true; // 처음인지 여부를 나타내는 플래그
+    private Button ingBt;
+    private Button endBt;
+
     public MyChallengeFragment() {
         // Required empty public constructor
     }
@@ -38,7 +41,7 @@ public class MyChallengeFragment extends Fragment {
         }
 
         // 진행중 버튼 클릭 시
-        Button ingBt = view.findViewById(R.id.ingBt);
+        ingBt = view.findViewById(R.id.ingBt);
         ingBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,11 +49,16 @@ public class MyChallengeFragment extends Fragment {
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new IngFragment())
                         .commit();
+
+                // 진행중 버튼의 배경색 변경
+                ingBt.setBackgroundResource(R.drawable.challingbtn);
+                // 마감 버튼의 배경색 원래대로 변경
+                endBt.setBackgroundResource(R.drawable.challendbtn);
             }
         });
 
         // 마감 버튼 클릭 시
-        Button endBt = view.findViewById(R.id.endBt);
+        endBt = view.findViewById(R.id.endBt);
         endBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +66,11 @@ public class MyChallengeFragment extends Fragment {
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new EndFragment())
                         .commit();
+
+                // 마감 버튼의 배경색 변경
+                endBt.setBackgroundResource(R.drawable.challingbtn);
+                // 진행중 버튼의 배경색 원래대로 변경
+                ingBt.setBackgroundResource(R.drawable.challendbtn);
             }
         });
 

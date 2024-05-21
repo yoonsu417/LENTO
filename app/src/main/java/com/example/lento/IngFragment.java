@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,11 +42,11 @@ public class IngFragment extends Fragment {
         dbHelper = new SQLiteHelper(getContext());
         database = dbHelper.getReadableDatabase();
 
-        // 현재 로그인한 사용자의 이메일을 가져옵니다.
+        // 현재 로그인한 사용자의 이메일을 가져온다
         CurrentUser user = (CurrentUser) getActivity().getApplicationContext();
         String currentUserEmail = user.getCurrentUser();
 
-        // 현재 로그인한 사용자의 챌린지를 가져옵니다.
+        // 현재 로그인한 사용자의 챌린지를 가져온다
         loadChallenges(currentUserEmail);
 
         adapter = new ChallengeAdapter(challengeList);
@@ -122,6 +125,8 @@ public class IngFragment extends Fragment {
         public class ChallengeViewHolder extends RecyclerView.ViewHolder {
             private TextView categoryTextView, titleTextView, dateTextView;
             private ProgressBar progressBar;
+            private CardView cardView;
+            private ImageView chellimg;
 
             public ChallengeViewHolder(View itemView) {
                 super(itemView);
@@ -129,6 +134,8 @@ public class IngFragment extends Fragment {
                 titleTextView = itemView.findViewById(R.id.titleTextView);
                 dateTextView = itemView.findViewById(R.id.dateTextView);
                 progressBar = itemView.findViewById(R.id.progressBar);
+                cardView = itemView.findViewById(R.id.cardView);
+                chellimg = itemView.findViewById(R.id.chellimg);
             }
 
             public void bind(Challenge challenge) {
@@ -137,6 +144,22 @@ public class IngFragment extends Fragment {
                 String dateString = formatDateRange(challenge.getStartDate(), challenge.getDeadline());
                 dateTextView.setText(dateString);
                 progressBar.setProgress(challenge.getProgress());
+
+                // 카테고리별로 배경색 변경
+                switch (challenge.getCategory()) {
+                    case "완곡목표":
+                        cardView.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.second));
+                        chellimg.setImageResource(R.drawable.finish);
+                        break;
+                    case "연습목표":
+                        cardView.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.third));
+                        chellimg.setImageResource(R.drawable.practice);
+                        break;
+                    default:
+                        cardView.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.main));
+                        chellimg.setImageResource(R.drawable.etc);
+                        break;
+                }
             }
         }
     }

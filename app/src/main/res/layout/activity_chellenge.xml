@@ -11,7 +11,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/back"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="30dp"
             android:text="뒤로가기"
             android:textSize="15dp"/>
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:fontFamily="@font/suite_semibold"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:text="챌린지 설정"
             android:textColor="#3E3E3E"
             android:textSize="25dp"/>
