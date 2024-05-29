@@ -183,7 +183,7 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/loginBt"
+        android:id="@+id/practiceBt"
         android:layout_width="350dp"
         android:layout_height="60dp"
         android:layout_gravity="center"

@@ -1,6 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="0dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <!-- 상단 아이콘 영역 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#4D5C84">
+
+        <!-- 뒤로 가기 아이콘 -->
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/backwhite"
+            android:contentDescription="뒤로 가기"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- 중앙에 정렬될 아이콘 그룹 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:id="@+id/icon_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/play"
+                android:contentDescription="시작"
+                android:layout_margin="8dp"/>
+
+            <ImageView
+                android:id="@+id/icon_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/pause"
+                android:contentDescription="정지"
+                android:layout_margin="8dp"/>
+
+            <ImageView
+                android:id="@+id/icon_metronome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/metronomee"
+                android:contentDescription="메트로놈"
+                android:layout_margin="8dp"/>
+
+            <ImageView
+                android:id="@+id/icon_moveto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/moveto"
+                android:contentDescription="이동"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+    </RelativeLayout>
+    </LinearLayout>
+    <!--악보 영역 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/scoreImage"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:src="@drawable/sample_test" />
+
+        <View
+            android:id="@+id/movingRectangle"
+            android:layout_width="20dp"
+            android:layout_height="50dp"
+            android:background="#4D96AAFF"
+            android:visibility="gone"
+            />
+    </FrameLayout>
 </LinearLayout>

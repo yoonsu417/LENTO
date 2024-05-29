@@ -174,9 +174,10 @@ public class HomeActivity extends Activity {
     }
     public void onTheoryClicked(View view) {
         // 음악이론 화면으로 이동하는 코드
-        Intent intent = new Intent(this, MypageActivity.class); //음악이론 액티비티 추가하면 바꿀것.
+        Intent intent = new Intent(this, TheoryActivity.class); //음악이론 액티비티 추가하면 바꿀것.
         startActivity(intent);
     }
+
 
 
 }

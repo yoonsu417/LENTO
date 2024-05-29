@@ -30,6 +30,14 @@ public class ScoreDetailActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreinfo);
+        Button practicebtn=findViewById(R.id.practiceBt);
+        practicebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent next2pIntent = new Intent(ScoreDetailActivity.this, PlayActivity.class);
+                startActivity(next2pIntent);
+            }
+        });
         //정확도 표 클릭시 상세페이지
         ImageView accuracy=findViewById(R.id.accuracy);
         accuracy.setOnClickListener(new View.OnClickListener() {

@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
         android:allowBackup="true"
@@ -26,6 +27,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".PlayActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize">
+        </activity>
+        <activity
+            android:name=".TheoryActivity"
+            android:label="TheoryActivity 액티비티"/>
         <activity
             android:name=".PerformProgressActivity"
             android:label="PerformProgressActivity 액티비티"/>
