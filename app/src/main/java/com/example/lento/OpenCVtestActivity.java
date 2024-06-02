@@ -305,6 +305,22 @@ public class OpenCVtestActivity extends AppCompatActivity {
         return pixels;
     }
 
+    public static int countPixels(Mat image, int top, int bottom, int col){
+        int cnt = 0;
+        boolean flag = false;
+
+        for(int row = top; row < bottom; row++){
+            if(!flag && image.get(row,col)[0] == 255){
+                flag = true;
+                cnt += 1;
+            } else if(flag && image.get(row,col)[0]==0){
+                flag = false;
+            }
+        }
+
+        return cnt;
+    }
+
 
     // -------------------------------------  Modules ---------------------------------------------
 
@@ -415,7 +431,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
             int w = (int) stats.get(i, 2)[0];
             int h = (int) stats.get(i, 3)[0];
             int area = (int) stats.get(i, 4)[0];
-            if (w >= getWeighted(5) && h >= getWeighted(5)) {
+            if (w >= getWeighted(11) && h >= getWeighted(11)) {
                 double center = getCenter(y, h);
                 for (int line = 0; line < lines; line++) {
                     double areaTop = staves.get(line * 5)[0] - getWeighted(20);
@@ -467,7 +483,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
             boolean direction = false;
             if (stems.size() > 0) { // 직선이 1개 이상 존재함
-                if (stems.get(0)[0] - stats[0] >= getWeighted(5)) { // 직선이 나중에 발견되면
+                if (stems.get(0)[0] - stats[0] >= getWeighted(8)) { // 직선이 나중에 발견되면
                     direction = true; // 정 방향 음표
                 } else { // 직선이 일찍 발견되면
                     direction = false; // 역 방향 음표
@@ -551,7 +567,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
         }
     }
 
-    public static void recognize_note(Mat image, double[] staff, int[] stats, List<int[]> stems, boolean direction) {
+    public static Object[] recognize_note(Mat image, double[] staff, int[] stats, List<int[]> stems, boolean direction) {
         int x = stats[0];
         int y = stats[1];
         int w = stats[2];
@@ -563,18 +579,19 @@ public class OpenCVtestActivity extends AppCompatActivity {
         //put_text(image, String.valueOf(h), new Point(x, y + h + getWeighted(70)));
         //put_text(image, String.valueOf(count_rect_pixels(image,new int[]{x,y,w,h})), new Point(x, y + h + getWeighted(95)));
 
-        List<int[]> notes = new ArrayList<>();
-        List<int[]> pitches = new ArrayList<>();
+        List<Integer> notes = new ArrayList<>();
+        List<Integer> pitches = new ArrayList<>();
 
         boolean noteCondition = (
                 !stems.isEmpty() &&
-                        w >= getWeighted(10) &&  // 넓이 조건
-                        h >= getWeighted(35) &&  // 높이 조건
-                        area >= getWeighted(95)  // 픽셀 갯수 조건
+                        w >= getWeighted(12) &&  // 넓이 조건
+                        h >= getWeighted(30) &&  // 높이 조건
+                        area >= getWeighted(120)  // 픽셀 갯수 조건
         );
 
         if (noteCondition) {
-            for (int[] stem : stems) {
+            for(int i = 0; i< stems.size(); i++){
+                int[] stem = stems.get(i);
                 NoteHeadResult rcResult = recongnize_note_head(image, stem, direction);
                 boolean headExist = rcResult.isHeadExist();
                 boolean headFill = rcResult.isHeadFill();
@@ -583,8 +600,37 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 put_text(image, String.valueOf(headExist), new Point(x - getWeighted(10), y + h + getWeighted(20)));
                 put_text(image, String.valueOf(headFill), new Point(x - getWeighted(10), y + h + getWeighted(50)));
 
+                if(headExist){
+                    int tail = tailRecognize(image, i, stem, direction);
+                    boolean dot = dotRecognize(image, stem, direction, stems.size(), tail);
+
+                    List<Integer> noteClassification = new ArrayList<>();
+                    noteClassification.add(!headFill && tail == 0 && !dot ? 2 : 0);
+                    noteClassification.add(!headFill && tail == 0 && dot ? -2 : 0);
+                    noteClassification.add(headFill && tail == 0 && !dot ? 4 : 0);
+                    noteClassification.add(headFill && tail == 0 && dot ? -4 : 0);
+                    noteClassification.add(headFill && tail == 1 && !dot ? 8 : 0);
+                    noteClassification.add(headFill && tail == 1 && dot ? -8 : 0);
+                    noteClassification.add(headFill && tail == 2 && !dot ? 16 : 0);
+                    noteClassification.add(headFill && tail == 2 && dot ? -16 : 0);
+                    noteClassification.add(headFill && tail == 3 && !dot ? 32 : 0);
+                    noteClassification.add(headFill && tail == 3 && dot ? -32 : 0);
+
+                    for (int note : noteClassification) {
+                        if (note != 0) {
+                            int pitch = pitchRecognize(image, staff, headCenter);
+                            notes.add(note);
+                            pitches.add(pitch);
+                            //put_text(image, String.valueOf(note), new Point(stem[0] - getWeighted(10), stem[1] + stem[3] + getWeighted(30)));
+                            //put_text(image, String.valueOf(pitch), new Point(stem[0] - getWeighted(10), stem[1] + stem[3] + getWeighted(30)));
+                            break;
+                        }
+                    }
+                }
             }
         }
+
+        return new Object[] {notes, pitches};
     }
 
     public static NoteHeadResult recongnize_note_head(Mat image, int[] stem, boolean direction) {
@@ -599,15 +645,15 @@ public class OpenCVtestActivity extends AppCompatActivity {
         int areaTop, areaBot, areaLeft, areaRight;
 
         if (direction) {
-            areaTop = y + h - getWeighted(7);  // 음표 머리를 탐색할 위치 (상단)
-            areaBot = y + h + getWeighted(7);  // 음표 머리를 탐색할 위치 (하단)
-            areaLeft = x - getWeighted(14);  // 음표 머리를 탐색할 위치 (좌측)
+            areaTop = y + h - getWeighted(10);  // 음표 머리를 탐색할 위치 (상단)
+            areaBot = y + h + getWeighted(5);  // 음표 머리를 탐색할 위치 (하단)
+            areaLeft = x - getWeighted(10);  // 음표 머리를 탐색할 위치 (좌측)
             areaRight = x;  // 음표 머리를 탐색할 위치 (우측)
         } else {  // 역 방향 음표
-            areaTop = y - getWeighted(7);  // 음표 머리를 탐색할 위치 (상단)
-            areaBot = y + getWeighted(7);  // 음표 머리를 탐색할 위치 (하단)
+            areaTop = y - getWeighted(3);  // 음표 머리를 탐색할 위치 (상단)
+            areaBot = y + getWeighted(10);  // 음표 머리를 탐색할 위치 (하단)
             areaLeft = x + w;  // 음표 머리를 탐색할 위치 (좌측)
-            areaRight = x + w + getWeighted(14);  // 음표 머리를 탐색할 위치 (우측)
+            areaRight = x + w + getWeighted(10);  // 음표 머리를 탐색할 위치 (우측)
         }
 
         //Imgproc.rectangle(image, new Point(areaLeft, areaTop), new Point(areaRight, areaBot), new Scalar(255, 0, 0), 1);
@@ -646,6 +692,94 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
     }
 
+    public static int tailRecognize(Mat image, int i, int[] stem, boolean direction){
+        int x = stem[0];
+        int y = stem[1];
+        int w = stem[2];
+        int h = stem[3];
+
+        int top, bottom, col;
+
+        if (direction) {  // 정 방향 음표
+            top = y;  // 음표 꼬리를 탐색할 위치 (상단)
+            bottom = y + h - getWeighted(20);  // 음표 꼬리를 탐색할 위치 (하단)
+        } else {  // 역 방향 음표
+            top = y + getWeighted(15);  // 음표 꼬리를 탐색할 위치 (상단)
+            bottom = y + h;  // 음표 꼬리를 탐색할 위치 (하단)
+        }
+
+        if (i != 0) {
+            col = x - getWeighted(4);  // 음표 꼬리를 탐색할 위치 (열)
+        } else {
+            col = x + w + getWeighted(4);  // 음표 꼬리를 탐색할 위치 (열)
+        }
+
+        if (i>0){
+            col = x - getWeighted(8);
+        } else {
+            col = x + w + getWeighted(8);
+        }
+
+        int cnt = 0;
+
+        cnt = countPixels(image, top, bottom, col);
+
+        //put_text(image, String.valueOf(cnt), new Point(x - getWeighted(10), y + h + getWeighted(20)));
+
+        return cnt;
+    }
+
+    public static boolean dotRecognize(Mat image, int[] stem, boolean direction, int tail_cnt, int stems_cnt){
+        int x = stem[0];
+        int y = stem[1];
+        int w = stem[2];
+        int h = stem[3];
+
+        int top, bottom, left, right;
+
+        if(direction){
+            top = y + h - getWeighted(5);
+            bottom = y + h - getWeighted(2);
+            left = x + w + getWeighted(2);
+            right = x + w + getWeighted(12);
+        } else {
+            top = y - getWeighted(10);
+            bottom = y + getWeighted(5);
+            left = x + w + getWeighted(14);
+            right = x + w + getWeighted(24);
+        }
+
+
+        //Rect rect = new Rect(left, top, right - left, bottom - top);
+        int pixels = count_rect_pixels(image, new int[]{left, top, right- left, bottom-top});
+        //put_text(image, String.valueOf(pixels), new Point(x, y + h+ getWeighted(20)));
+        //Imgproc.rectangle(image, rect, new Scalar(255, 0, 0), 1);
+
+        if (direction && stems_cnt == 1){
+            return pixels >= getWeighted(20);
+        }else if(!direction && stems_cnt == 1){
+            return pixels >= getWeighted(20);
+        } else{
+            return pixels >= getWeighted(5);
+        }
+
+    }
+
+    public static int pitchRecognize(Mat image, double[] staff, int head_center){
+        List<Integer> pitches = new ArrayList<>();
+        for (int i = 0; i < 21; i++) {
+            int line = (int) (staff[4] + getWeighted(30) - getWeighted(5) * i);
+            pitches.add(line);
+        }
+
+        for(int i = 0; i<pitches.size(); i++){
+            int line = pitches.get(i);
+            if(line + getWeighted(2) >= head_center && head_center >= line - getWeighted(2)){
+                return i;
+            }
+        }
+        return -1;
+    }
 
     // return 값 4개 처리 위한 클래스
     public static class RecognitionResult {
