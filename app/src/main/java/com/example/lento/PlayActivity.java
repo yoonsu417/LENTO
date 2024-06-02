@@ -8,6 +8,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +37,7 @@ public class PlayActivity extends AppCompatActivity {
     private AudioRecord audioRecord;
     private Thread recordingThread; // 녹음을 위한 스레드 추가
     private String outputFile;
+    private ByteArrayOutputStream pcmBuffer; // PCM 데이터를 저장할 버퍼
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +76,10 @@ public class PlayActivity extends AppCompatActivity {
             }
         });
 
-        // 녹음 파일 경로 설정 (수정된 부분)
-        outputFile = getExternalFilesDir(null).getAbsolutePath() + "/" + UUID.randomUUID().toString() + ".pcm"; // 외부 캐시 대신 외부 파일 디렉토리 사용
+        // 녹음 파일 경로 설정
+        outputFile = getExternalFilesDir(null).getAbsolutePath() + "/" + UUID.randomUUID().toString() + ".wav";
+        //outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + UUID.randomUUID().toString() + ".wav";
+        //outputFile = getExternalFilesDir(null).getAbsolutePath() + "/" + UUID.randomUUID().toString() + ".wav";
     }
 
     private void toggleRecording() {
@@ -99,17 +104,19 @@ public class PlayActivity extends AppCompatActivity {
             return;
         }
 
+        pcmBuffer = new ByteArrayOutputStream(); // PCM 버퍼 초기화
         audioRecord.startRecording();
         isRecording = true;
 
-        // 녹음을 위한 스레드 시작 (추가된 부분)
+        // 녹음을 위한 스레드 시작
         recordingThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                writeAudioDataToFile(); // 녹음 데이터를 파일에 씀
+                writeAudioDataToBuffer();
             }
         });
         recordingThread.start();
+
         // 파일 경로를 로그로 출력
         Log.i(LOG_TAG, "Recording to file: " + outputFile);
 
@@ -159,42 +166,87 @@ public class PlayActivity extends AppCompatActivity {
                 .show();
     }
 
-    // 녹음 데이터를 파일에 쓰기 위한 메서드 (추가된 부분)
-    private void writeAudioDataToFile() {
+    // PCM 데이터를 버퍼에 쓰기 위한 메서드
+    private void writeAudioDataToBuffer() {
         int bufferSize = AudioRecord.getMinBufferSize(44100, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
         byte[] buffer = new byte[bufferSize];
-        FileOutputStream os = null;
-        try {
-            os = new FileOutputStream(new File(outputFile));
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error creating output file", e);
-            return;
-        }
 
         while (isRecording) {
             int read = audioRecord.read(buffer, 0, buffer.length);
             if (read != AudioRecord.ERROR_INVALID_OPERATION && read != AudioRecord.ERROR_BAD_VALUE) {
-                try {
-                    os.write(buffer, 0, read);
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Error writing to file", e);
-                    return;
-                }
+                pcmBuffer.write(buffer, 0, read);
             }
-        }
-
-        try {
-            os.close();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error closing file", e);
         }
     }
 
     private void saveRecording() {
-        // 녹음 파일 저장 및 추가 작업을 여기에 구현
-        Toast.makeText(this, "연주가 녹음되었습니다.", Toast.LENGTH_SHORT).show();
+        // PCM 데이터를 WAV 파일로 저장
+        try {
+            byte[] pcmData = pcmBuffer.toByteArray();
+            FileOutputStream out = new FileOutputStream(outputFile);
+            writeWavHeader(out, pcmData.length);
+            out.write(pcmData);
+            out.close();
+            Toast.makeText(this, "녹음이 저장되었습니다: " + outputFile, Toast.LENGTH_LONG).show();
+            Log.i(LOG_TAG, "녹음이 저장되었습니다: " + outputFile); // 로그 출력
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error saving WAV file", e);
+        }
     }
 
+    private void writeWavHeader(FileOutputStream out, int pcmDataSize) throws IOException {
+        int totalDataLen = pcmDataSize + 36;
+        int byteRate = 44100 * 2 * 1;
+
+        byte[] header = new byte[44];
+        header[0] = 'R';  // RIFF/WAVE header
+        header[1] = 'I';
+        header[2] = 'F';
+        header[3] = 'F';
+        header[4] = (byte) (totalDataLen & 0xff);
+        header[5] = (byte) ((totalDataLen >> 8) & 0xff);
+        header[6] = (byte) ((totalDataLen >> 16) & 0xff);
+        header[7] = (byte) ((totalDataLen >> 24) & 0xff);
+        header[8] = 'W';
+        header[9] = 'A';
+        header[10] = 'V';
+        header[11] = 'E';
+        header[12] = 'f';  // 'fmt ' chunk
+        header[13] = 'm';
+        header[14] = 't';
+        header[15] = ' ';
+        header[16] = 16;  // 4 bytes: size of 'fmt ' chunk
+        header[17] = 0;
+        header[18] = 0;
+        header[19] = 0;
+        header[20] = 1;  // format = 1
+        header[21] = 0;
+        header[22] = 1;  // channels
+        header[23] = 0;
+        header[24] = (byte) (44100 & 0xff);
+        header[25] = (byte) ((44100 >> 8) & 0xff);
+        header[26] = (byte) ((44100 >> 16) & 0xff);
+        header[27] = (byte) ((44100 >> 24) & 0xff);
+        header[28] = (byte) (byteRate & 0xff);
+        header[29] = (byte) ((byteRate >> 8) & 0xff);
+        header[30] = (byte) ((byteRate >> 16) & 0xff);
+        header[31] = (byte) ((byteRate >> 24) & 0xff);
+        header[32] = (byte) (2 * 1);  // block align
+        header[33] = 0;
+        header[34] = 16;  // bits per sample
+        header[35] = 0;
+        header[36] = 'd';
+        header[37] = 'a';
+        header[38] = 't';
+        header[39] = 'a';
+        header[40] = (byte) (pcmDataSize & 0xff);
+        header[41] = (byte) ((pcmDataSize >> 8) & 0xff);
+        header[42] = (byte) ((pcmDataSize >> 16) & 0xff);
+        header[43] = (byte) ((pcmDataSize >> 24) & 0xff);
+
+        out.write(header, 0, 44);
+    }
+    // 권한 요청 결과 처리 메서드
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
