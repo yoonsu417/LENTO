@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
@@ -504,6 +505,8 @@ public class OpenCVtestActivity extends AppCompatActivity {
         List<int[]> beats = new ArrayList<>();
         List<int[]> pitches = new ArrayList<>();
 
+        ArrayList<int[]> beatPitch = new ArrayList<>();
+
         for (int i = 1; i < objects.size(); i++) {
             Object[] obj = objects.get(i);
             int line = (int) obj[0];
@@ -528,14 +531,44 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 int temp_key = (int) result[1];
                 key += temp_key;
             } else {
-                recognize_note(image, staff, stats, stems, direction);
+                Object[] result = recognize_note(image, staff, stats, stems, direction);
+                beats = (List<int[]>) result[0];
+                pitches = (List<int[]>) result[1];
+
+                if(!beats.isEmpty() && !pitches.isEmpty()){
+                    for(int j =0; j<beats.size(); j++){
+                        int[] currentBeat = beats.get(j);
+                        int[] currentPitch = pitches.get(j);
+                        if(currentBeat.length > 1 && currentPitch.length > 1){
+                            int[] beatPitchPair1 = new int[2];
+                            beatPitchPair1[0] = currentBeat[0];
+                            beatPitchPair1[1] = currentPitch[0];
+                            beatPitch.add(beatPitchPair1);
+
+                            int[] beatPitchPair2 = new int[2];
+                            beatPitchPair2[0] = currentBeat[1];
+                            beatPitchPair2[1] = currentPitch[1];
+                            beatPitch.add(beatPitchPair2);
+                        } else{
+                            int[] beatPitchPair = new int[2];
+                            beatPitchPair[0] = currentBeat[0];
+                            beatPitchPair[1] = currentPitch[0];
+                            beatPitch.add(beatPitchPair);
+                        }
+                    }
+                }
             }
 
-            Imgproc.rectangle(image, new Point(x, y), new Point(x + w, y + h), new Scalar(255, 0, 0), 1);
-            put_text(image, String.valueOf(i), new Point(x, y - getWeighted(30)));
+            //Imgproc.rectangle(image, new Point(x, y), new Point(x + w, y + h), new Scalar(255, 0, 0), 1);
+            //put_text(image, String.valueOf(i), new Point(x, y - getWeighted(30)));
 
         }
-        return new RecognitionResult(image, key, beats, pitches);
+
+        for (int[] list : beatPitch) {
+            System.out.println(Arrays.toString(list));
+        }
+
+        return new RecognitionResult(image, key, beatPitch);
     }
 
 
@@ -579,8 +612,8 @@ public class OpenCVtestActivity extends AppCompatActivity {
         //put_text(image, String.valueOf(h), new Point(x, y + h + getWeighted(70)));
         //put_text(image, String.valueOf(count_rect_pixels(image,new int[]{x,y,w,h})), new Point(x, y + h + getWeighted(95)));
 
-        List<Integer> notes = new ArrayList<>();
-        List<Integer> pitches = new ArrayList<>();
+        List<int[]> notes = new ArrayList<>();
+        List<int[]> pitches = new ArrayList<>();
 
         boolean noteCondition = (
                 !stems.isEmpty() &&
@@ -596,9 +629,6 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 boolean headExist = rcResult.isHeadExist();
                 boolean headFill = rcResult.isHeadFill();
                 int headCenter = rcResult.getHeadCenter();
-
-                put_text(image, String.valueOf(headExist), new Point(x - getWeighted(10), y + h + getWeighted(20)));
-                put_text(image, String.valueOf(headFill), new Point(x - getWeighted(10), y + h + getWeighted(50)));
 
                 if(headExist){
                     int tail = tailRecognize(image, i, stem, direction);
@@ -619,8 +649,9 @@ public class OpenCVtestActivity extends AppCompatActivity {
                     for (int note : noteClassification) {
                         if (note != 0) {
                             int pitch = pitchRecognize(image, staff, headCenter);
-                            notes.add(note);
-                            pitches.add(pitch);
+                            notes.add(new int[]{note});
+                            pitches.add(new int[]{pitch});
+
                             //put_text(image, String.valueOf(note), new Point(stem[0] - getWeighted(10), stem[1] + stem[3] + getWeighted(30)));
                             //put_text(image, String.valueOf(pitch), new Point(stem[0] - getWeighted(10), stem[1] + stem[3] + getWeighted(30)));
                             break;
@@ -645,15 +676,15 @@ public class OpenCVtestActivity extends AppCompatActivity {
         int areaTop, areaBot, areaLeft, areaRight;
 
         if (direction) {
-            areaTop = y + h - getWeighted(10);  // 음표 머리를 탐색할 위치 (상단)
-            areaBot = y + h + getWeighted(5);  // 음표 머리를 탐색할 위치 (하단)
-            areaLeft = x - getWeighted(10);  // 음표 머리를 탐색할 위치 (좌측)
-            areaRight = x;  // 음표 머리를 탐색할 위치 (우측)
+            areaTop = y + h - getWeighted(15);  // 음표 머리를 탐색할 위치 (상단)
+            areaBot = y + h + getWeighted(7);  // 음표 머리를 탐색할 위치 (하단)
+            areaLeft = x - getWeighted(11);  // 음표 머리를 탐색할 위치 (좌측)
+            areaRight = x + getWeighted(4);  // 음표 머리를 탐색할 위치 (우측)
         } else {  // 역 방향 음표
-            areaTop = y - getWeighted(3);  // 음표 머리를 탐색할 위치 (상단)
-            areaBot = y + getWeighted(10);  // 음표 머리를 탐색할 위치 (하단)
-            areaLeft = x + w;  // 음표 머리를 탐색할 위치 (좌측)
-            areaRight = x + w + getWeighted(10);  // 음표 머리를 탐색할 위치 (우측)
+            areaTop = y - getWeighted(9);  // 음표 머리를 탐색할 위치 (상단)
+            areaBot = y + getWeighted(11);  // 음표 머리를 탐색할 위치 (하단)
+            areaLeft = x + w - getWeighted(2);  // 음표 머리를 탐색할 위치 (좌측)
+            areaRight = x + w + getWeighted(9);  // 음표 머리를 탐색할 위치 (우측)
         }
 
         //Imgproc.rectangle(image, new Point(areaLeft, areaTop), new Point(areaRight, areaBot), new Scalar(255, 0, 0), 1);
@@ -663,30 +694,40 @@ public class OpenCVtestActivity extends AppCompatActivity {
         int headCenter = 0;
         int pixelCnt = count_rect_pixels(image, new int[]{areaLeft, areaTop, areaRight - areaLeft, areaBot - areaTop});
 
+
         for (int row = areaTop; row < areaBot; row++) {
             List<int[]> lineInfo = getLine(image, HORIZONTAL, row, areaLeft, areaRight, 5);
             int end = lineInfo.get(0)[0];
             int pixels = lineInfo.get(0)[1];
             pixels += 1;
 
-            if (pixels > 0) {
+            if (pixels > 5) {
                 cnt += 1;
                 cntMax = Math.max(cntMax, pixels);
                 headCenter += row;
             }
         }
 
-        //put_text(image, String.valueOf(cnt), new Point(x - getWeighted(10), y + h + getWeighted(30)));
-        //put_text(image, String.valueOf(cntMax), new Point(x - getWeighted(10), y + h + getWeighted(60)));
-        //put_text(image, String.valueOf(pixelCnt), new Point(x - getWeighted(10), y + h + getWeighted(90)));
+        put_text(image, String.valueOf(cnt), new Point(x - getWeighted(10), y + h + getWeighted(30)));
+        put_text(image, String.valueOf(cntMax), new Point(x - getWeighted(10), y + h + getWeighted(60)));
+        put_text(image, String.valueOf(pixelCnt), new Point(x - getWeighted(10), y + h + getWeighted(90)));
+
 
         boolean headExist = (cnt >= 3 && pixelCnt >= 50);
-        boolean headFill = (cnt >= 8 && cntMax >= 9 && pixelCnt >= 80);
+        boolean headFill;
+        if(direction){
+            headFill = (cnt >= 8 && cntMax >= 9 && pixelCnt > 149);
+        } else{
+            headFill = (cnt >= 8 && cntMax >= 9 && pixelCnt > 115);
+        }
+
         if (cnt != 0) {
             headCenter /= cnt;
         } else {
             headCenter = 0;
         }
+
+        //put_text(image, String.valueOf(headCenter), new Point(x, y + h+ getWeighted(80)));
 
         return new NoteHeadResult(headExist, headFill, headCenter);
 
@@ -768,13 +809,13 @@ public class OpenCVtestActivity extends AppCompatActivity {
     public static int pitchRecognize(Mat image, double[] staff, int head_center){
         List<Integer> pitches = new ArrayList<>();
         for (int i = 0; i < 21; i++) {
-            int line = (int) (staff[4] + getWeighted(30) - getWeighted(5) * i);
+            int line = (int) (staff[4] + getWeighted(40) - getWeighted(5) * i);
             pitches.add(line);
         }
 
         for(int i = 0; i<pitches.size(); i++){
             int line = pitches.get(i);
-            if(line + getWeighted(2) >= head_center && head_center >= line - getWeighted(2)){
+            if(line + getWeighted(3) > head_center && head_center >= line - getWeighted(2)){
                 return i;
             }
         }
@@ -785,14 +826,12 @@ public class OpenCVtestActivity extends AppCompatActivity {
     public static class RecognitionResult {
         private Mat image;
         private int key;
-        private List<int[]> beats = new ArrayList<>();
-        private List<int[]> pitches = new ArrayList<>();
+        private List<int[]> beatPitch = new ArrayList<>();
 
-        public RecognitionResult(Mat image, int key, List<int[]> beats, List<int[]> pitches) {
+        public RecognitionResult(Mat image, int key, List<int[]> beatPitch) {
             this.image = image;
             this.key = key;
-            this.beats = beats;
-            this.pitches = pitches;
+            this.beatPitch = beatPitch;
         }
 
         public Mat getImage() {
@@ -803,13 +842,10 @@ public class OpenCVtestActivity extends AppCompatActivity {
             return key;
         }
 
-        public List<int[]> getBeats() {
-            return beats;
+        public List<int[]> getBeatPitch() {
+            return beatPitch;
         }
 
-        public List<int[]> getPitches() {
-            return pitches;
-        }
 
     }
 
