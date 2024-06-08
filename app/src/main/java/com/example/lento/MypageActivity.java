@@ -36,8 +36,8 @@ public class MypageActivity extends AppCompatActivity {
         String userName = getUserNameFromDB(userEmail); // 사용자 이름 가져오기
 
         // TextView에 설정
-        nameTextView.setText(userName);
         emailTextView.setText(userEmail);
+        nameTextView.setText(userName);
 
         //로그아웃 버튼 클릭시 로그인창으로 이동
         Button logoutBt = findViewById(R.id.logoutBt);
@@ -129,6 +129,21 @@ public class MypageActivity extends AppCompatActivity {
     public void onHomeClicked(View view) {
         // 홈 화면으로 이동하는 코드
         Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
+    public void onSheetClicked(View view) {
+        // 악보리스트 화면으로 이동하는 코드
+        Intent intent = new Intent(this, ScorelistActivity.class);
+        startActivity(intent);
+    }
+    public void onMypageClicked(View view) {
+        // 마이페이지 화면으로 이동하는 코드
+        Intent intent = new Intent(this, MypageActivity.class);
+        startActivity(intent);
+    }
+    public void onTheoryClicked(View view) {
+        // 음악이론 화면으로 이동하는 코드
+        Intent intent = new Intent(this, TheoryActivity.class); //음악이론 액티비티 추가하면 바꿀것.
         startActivity(intent);
     }
 }
