@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> {
     private Context context;
@@ -52,25 +53,18 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
 
         // PDF 파일을 비트맵으로 변환하여 이미지뷰에 설정
         try {
-            File file = new File(score.getImagePath());
-            ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-            if (parcelFileDescriptor != null) {
-                PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
-                if (renderer.getPageCount() > 0) {
-                    PdfRenderer.Page page = renderer.openPage(0);
-                    Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
-                    bitmap.eraseColor(Color.WHITE); // 비트맵을 흰색으로 초기화
-                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-                    holder.sheetImage.setImageBitmap(bitmap);
-                    page.close();
-                    Log.d("PDF_LOAD", "비트맵 생성 및 이미지뷰 설정 완료");
-                } else {
-                    Log.e("PDF_LOAD", "PDF 파일의 페이지 수가 0입니다.");
-                }
-                renderer.close();
-                parcelFileDescriptor.close();
+            //File file = new File(score.getImagePath());
+            //ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+            Uri pdfuri = Uri.parse(score.getImagePath());
+            Bitmap bitmap = renderPDFToBitmap(context, pdfuri);
+
+            if (bitmap != null) {
+                holder.sheetImage.setImageBitmap(bitmap);
+                Log.d("PDF_LOAD", "비트맵 생성 및 이미지뷰 설정 완료");
             } else {
-                Log.e("PDF_LOAD", "ParcelFileDescriptor가 null입니다.");
+                Log.e("PDF_LOAD", "비트맵 생성 실패");
+                // 이미지 로드 실패 시, placeholder 이미지 설정
+                holder.sheetImage.setImageResource(R.drawable.scorelisttmp);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,6 +90,49 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return scoreList.size();
+    }
+
+    private Bitmap renderPDFToBitmap(Context context, Uri pdfUri) {
+        ParcelFileDescriptor fileDescriptor = null;
+        PdfRenderer pdfRenderer = null;
+        PdfRenderer.Page page = null;
+
+        try {
+            fileDescriptor = context.getContentResolver().openFileDescriptor(pdfUri, "r");
+            if (fileDescriptor != null) {
+                pdfRenderer = new PdfRenderer(fileDescriptor);
+                if (pdfRenderer.getPageCount() > 0) {
+                    page = pdfRenderer.openPage(0);
+
+                    Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+                    bitmap.eraseColor(Color.WHITE); // 비트맵을 흰색으로 초기화
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+
+                    return bitmap;
+                } else {
+                    Log.e("PDF_LOAD", "PDF 파일의 페이지 수가 0입니다.");
+                }
+            } else {
+                Log.e("PDF_LOAD", "ParcelFileDescriptor가 null입니다.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (page != null) {
+                page.close();
+            }
+            if (pdfRenderer != null) {
+                pdfRenderer.close();
+            }
+            if (fileDescriptor != null) {
+                try {
+                    fileDescriptor.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
