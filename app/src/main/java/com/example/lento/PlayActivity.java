@@ -151,8 +151,8 @@ public class PlayActivity extends AppCompatActivity {
     private void showStopWarning() {
         new AlertDialog.Builder(this)
                 .setTitle("Warning")
-                .setMessage("연주를 마무리하지 않으면 정확도 판단이 불가합니다.")
-                .setPositiveButton("멈추기", new DialogInterface.OnClickListener() {
+                .setMessage("연주를 마무리 하시겠습니까?")
+                .setPositiveButton("저장", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // 녹음 중지 후 아이콘 상태 변경

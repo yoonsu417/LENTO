@@ -28,36 +28,67 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="날짜별 연주 정확도"
+        android:text="나의 연주 기록"
         android:fontFamily="@font/suite_bold"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="30dp"
         android:textColor="#3E3E3E"
         android:textSize="20dp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="29sp"
+        android:layout_marginRight="29sp"
+        android:layout_marginTop="5sp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/ree"/>
+        <TextView
+            android:id="@+id/count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8번"
+            android:layout_marginTop="50sp"
+            android:layout_marginLeft="80sp"
+            android:fontFamily="@font/suite_semibold"
+            android:textColor="#3E3E3E"
+            android:textSize="20dp"/>
+        <TextView
+            android:id="@+id/acc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="87%"
+            android:layout_marginTop="50sp"
+            android:layout_marginLeft="267sp"
+            android:fontFamily="@font/suite_semibold"
+            android:textColor="#3E3E3E"
+            android:textSize="20dp"/>
+    </RelativeLayout>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="총 연주 횟수 : 8번"
-        android:fontFamily="@font/suite_regular"
+        android:text="6월 2주차의 연주"
+        android:fontFamily="@font/suite_bold"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="30dp"
         android:textColor="#3E3E3E"
         android:textSize="20dp"/>
-    <TextView
-        android:layout_width="wrap_content"
+    <ImageView
+        android:layout_marginLeft="29sp"
+        android:layout_marginRight="29sp"
+        android:layout_marginTop="9sp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:text="최근 연주 정확도 : 87%"
-        android:fontFamily="@font/suite_regular"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="8dp"
-        android:textColor="#3E3E3E"
-        android:textSize="20dp"/>
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_marginTop="20dp"
-        android:id="@+id/lineChart"
-        android:layout_gravity="center"
-        android:layout_width="360dp"
-        android:layout_height="150dp"/>
+        android:src="@drawable/avgac"/>
+    <com.github.mikephil.charting.charts.BarChart
+        android:layout_marginLeft="29sp"
+        android:layout_marginRight="29sp"
+        android:layout_marginTop="9sp"
+        android:id="@+id/barChart"
+        android:layout_width="match_parent"
+        android:layout_height="200sp" />
 
 
 

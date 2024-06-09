@@ -2,15 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <TextView
+    android:orientation="vertical"
+    android:padding="25sp">
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="165dp"
-        android:layout_marginTop="80dp"
-        android:text="Hi"
-        android:textColor="#3E3E3E"
-        android:textSize="25dp"
-        android:textStyle="bold"/>
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="6월 2주차 총 연습시간"
+            android:textSize="16sp"
+            android:fontFamily="@font/suite_regular"
+            android:textColor="#3e3e3e"
+            />
+        <ImageView
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="3dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/downn" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/h14" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="327dp"
+        android:src="@drawable/sta" />
 
 </LinearLayout>

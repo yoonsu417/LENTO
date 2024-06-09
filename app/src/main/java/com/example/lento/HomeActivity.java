@@ -2,12 +2,17 @@ package com.example.lento;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -23,6 +28,20 @@ public class HomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+
+        // 프로그레스바의 전체 Drawable 얻기
+        LayerDrawable drawable = (LayerDrawable) progressBar.getProgressDrawable();
+
+        // 채워진 부분 색상 변경
+        Drawable progressDrawable = drawable.findDrawableByLayerId(android.R.id.progress);
+        progressDrawable.setTint(Color.parseColor("#96AAFF"));
+
+        // 채워지지 않은 부분 색상 변경
+        Drawable backgroundDrawable = drawable.findDrawableByLayerId(android.R.id.background);
+        backgroundDrawable.setTint(Color.parseColor("#4DFFFFFF"));
+
 
         // DatabaseHelper 초기화
         dbHelper = new SQLiteHelper(this);
