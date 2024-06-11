@@ -56,6 +56,7 @@ public class HomeActivity extends Activity {
         // 최근 저장된 챌린지 정보를 가져와서 홈 화면에 표시
         displayRecentChallenge();
 
+
         // 악보이미지 누르면 pdf 선택 화면으로 이동
         Button Upload;
 
@@ -83,6 +84,7 @@ public class HomeActivity extends Activity {
             }
         });
 
+
     }
     // 데이터베이스에서 사용자 이름을 가져오는 메서드
     public String getUserName(String userEmail) {
@@ -108,18 +110,24 @@ public class HomeActivity extends Activity {
         String userName = "";
 
         // 데이터베이스에서 사용자 이름을 가져오는 쿼리
-        String query = "SELECT NAME FROM USER";
+        //String query = "SELECT NAME FROM USER";
+
+        CurrentUser user = (CurrentUser)getApplicationContext();
+        String set_user = user.getCurrentUser();
+        String query = "SELECT NAME FROM USER WHERE EMAIL = '" + set_user + "'";
         Cursor cursor = db.rawQuery(query, null);
 
         // 결과가 있으면 사용자 이름을 가져옴
         if (cursor.moveToFirst()) {
             userName = cursor.getString(0);
         }
+
         // 커서를 닫음
         cursor.close();
 
         return userName;
     }
+
     // 최근 저장된 챌린지 정보를 가져와서 홈 화면에 표시하는 메서드
     private void displayRecentChallenge() {
         TextView challTypeTextView = findViewById(R.id.challtype);
@@ -178,11 +186,6 @@ public class HomeActivity extends Activity {
         }
     }
     // 홈 클릭 시 실행되는 메서드
-    public void onHomeClicked(View view) {
-        // 홈 화면으로 이동하는 코드를 작성합니다.
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
-    }
     public void onSheetClicked(View view) {
         // 악보리스트 화면으로 이동하는 코드
         Intent intent = new Intent(this, ScorelistActivity.class);
