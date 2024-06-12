@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.util.Log;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -29,6 +30,8 @@ import org.opencv.imgproc.Imgproc;
 
 public class OpenCVtestActivity extends AppCompatActivity {
     private static final String TAG = "TEST_OPEN_CV_ANDROID";
+
+    private List<Object[]> allResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,19 +180,36 @@ public class OpenCVtestActivity extends AppCompatActivity {
         // 7. 조표 인식
         RecognitionResult rcResult = recognition(analysisImage, normalizedStaves, analysisObjects);
         Mat recognitionImage = rcResult.getImage();
+        //List<int[]> beatPitch = rcResult.getBeatPitch();
+        //System.out.println(beatPitch);
         System.out.println("key = " + rcResult.getKey());
 
+        /*
+        System.out.println("박자, 계이름 출력");
+        for (int[] list : beatPitch) {
+            System.out.println(Arrays.toString(list));
+        }
+
+
+         */
 
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
-        Bitmapimage = Bitmap.createBitmap(recognitionImage.cols(), recognitionImage.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(recognitionImage, Bitmapimage);
+        Bitmapimage = Bitmap.createBitmap(imageWithoutStaves.cols(), imageWithoutStaves.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(imageWithoutStaves, Bitmapimage);
 
         // 비트맵 이미지 화면 출력
         OpenCVtest.setImageBitmap(Bitmapimage);
 
     }
 
+    /*
+    public List<Object[]> getAnalysisObjects() {
+        return analysisObjects;
+    }
+
+
+     */
 
     // ---------------------------------------- funtions ------------------------------------------
 
@@ -386,7 +406,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
             for (int staff = 0; staff < 4; staff++) {
                 int staffAbove = staves.get(line * 5 + staff)[0];
                 int staffBelow = staves.get(line * 5 + staff + 1)[0];
-                avgDistance += Math.abs(staffAbove - staffBelow);
+                avgDistance += Math.abs(staffAbove - staffBelow); // 절댓값
             }
         }
         avgDistance /= staves.size() - lines;
@@ -504,7 +524,6 @@ public class OpenCVtestActivity extends AppCompatActivity {
         boolean time_signature = false;
         List<int[]> beats = new ArrayList<>();
         List<int[]> pitches = new ArrayList<>();
-
         ArrayList<int[]> beatPitch = new ArrayList<>();
 
         for (int i = 1; i < objects.size(); i++) {
@@ -524,7 +543,6 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 staff[j - line * 5] = staves.get(j)[0];
             }
 
-
             if (!time_signature) {
                 Object[] result = recognizeKey(image, staff, stats);
                 time_signature = (boolean) result[0];
@@ -532,29 +550,35 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 key += temp_key;
             } else {
                 Object[] result = recognize_note(image, staff, stats, stems, direction);
-                beats = (List<int[]>) result[0];
-                pitches = (List<int[]>) result[1];
+                List<int[]> statList = (List<int[]>) result[0];
+                beats = (List<int[]>) result[1];
+                pitches = (List<int[]>) result[2];
+
+                System.out.println("객체 확인");
+                for (int[] statArray : statList) {
+                    System.out.print(Arrays.toString(statArray) + "객체 끝");
+                }
+                for (int[] beatArray : beats) {
+                    System.out.print(Arrays.toString(beatArray) + "박자");
+                }
+                for (int[] pitchArray : pitches) {
+                    System.out.println(Arrays.toString(pitchArray) + "계이름");
+                }
+
 
                 if(!beats.isEmpty() && !pitches.isEmpty()){
                     for(int j =0; j<beats.size(); j++){
                         int[] currentBeat = beats.get(j);
                         int[] currentPitch = pitches.get(j);
-                        if(currentBeat.length > 1 && currentPitch.length > 1){
-                            int[] beatPitchPair1 = new int[2];
-                            beatPitchPair1[0] = currentBeat[0];
-                            beatPitchPair1[1] = currentPitch[0];
-                            beatPitch.add(beatPitchPair1);
+                        int[] currentStat = statList.get(0);
 
-                            int[] beatPitchPair2 = new int[2];
-                            beatPitchPair2[0] = currentBeat[1];
-                            beatPitchPair2[1] = currentPitch[1];
-                            beatPitch.add(beatPitchPair2);
-                        } else{
-                            int[] beatPitchPair = new int[2];
-                            beatPitchPair[0] = currentBeat[0];
-                            beatPitchPair[1] = currentPitch[0];
-                            beatPitch.add(beatPitchPair);
+                        int[] beatPitchPair = new int[7];
+                        beatPitchPair[0] = currentBeat[0];
+                        beatPitchPair[1] = currentPitch[0];
+                        for(int k = 2; k < 7; k++){
+                            beatPitchPair[k] = currentStat[k-2];
                         }
+                        beatPitch.add(beatPitchPair);
                     }
                 }
             }
@@ -564,9 +588,13 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
         }
 
+
+        System.out.println("므ㅝ지");
         for (int[] list : beatPitch) {
             System.out.println(Arrays.toString(list));
         }
+
+
 
         return new RecognitionResult(image, key, beatPitch);
     }
@@ -614,7 +642,19 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
         List<int[]> notes = new ArrayList<>();
         List<int[]> pitches = new ArrayList<>();
+        List<int[]> statList = new ArrayList<>();
+        statList.add(stats);
 
+        /*
+        System.out.println("리스트가 잘 들어갔는지 먼저 확인");
+        for(int[] a: statList){
+            for (int value : a) {
+                System.out.print(value + " ");
+            }
+            System.out.println();
+        }
+
+         */
         boolean noteCondition = (
                 !stems.isEmpty() &&
                         w >= getWeighted(12) &&  // 넓이 조건
@@ -661,7 +701,8 @@ public class OpenCVtestActivity extends AppCompatActivity {
             }
         }
 
-        return new Object[] {notes, pitches};
+
+        return new Object[] {statList, notes, pitches};
     }
 
     public static NoteHeadResult recongnize_note_head(Mat image, int[] stem, boolean direction) {
@@ -708,9 +749,9 @@ public class OpenCVtestActivity extends AppCompatActivity {
             }
         }
 
-        put_text(image, String.valueOf(cnt), new Point(x - getWeighted(10), y + h + getWeighted(30)));
-        put_text(image, String.valueOf(cntMax), new Point(x - getWeighted(10), y + h + getWeighted(60)));
-        put_text(image, String.valueOf(pixelCnt), new Point(x - getWeighted(10), y + h + getWeighted(90)));
+        //put_text(image, String.valueOf(cnt), new Point(x - getWeighted(10), y + h + getWeighted(30)));
+        //put_text(image, String.valueOf(cntMax), new Point(x - getWeighted(10), y + h + getWeighted(60)));
+        //put_text(image, String.valueOf(pixelCnt), new Point(x - getWeighted(10), y + h + getWeighted(90)));
 
 
         boolean headExist = (cnt >= 3 && pixelCnt >= 50);
