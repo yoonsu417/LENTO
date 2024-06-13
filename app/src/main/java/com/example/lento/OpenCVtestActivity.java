@@ -3,7 +3,9 @@ package com.example.lento;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Pair;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -28,17 +31,12 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 
-public class OpenCVtestActivity extends AppCompatActivity {
+public class OpenCVtestActivity {
     private static final String TAG = "TEST_OPEN_CV_ANDROID";
 
-    private List<Object[]> allResult;
+    private List<int[]> beatPitch;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_open_cvtest);
-
-        /*
+    protected void processImage(Context context, int drawbleResource) {
         // OpenCV 라이브러리 초기화
         if (!OpenCVLoader.initDebug()) {
             Log.e(TAG, "OpenCV 초기화 실패!");
@@ -46,15 +44,12 @@ public class OpenCVtestActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "OpenCV 초기화 성공!!!!!");
         }
-        */
 
-        ImageView OpenCVtest;
-        OpenCVtest = findViewById(R.id.OpenCVtest);
 
         // Mat 객체 불러오기 : JPG -> Mat
         Mat image = null;
         try {
-            image = Utils.loadResource(getApplicationContext(), R.drawable.sheet);
+            image = Utils.loadResource(context, drawbleResource);
         } catch (Exception e) {
             Log.e(TAG, "이미지를 읽을 수 없습니다: " + e.getMessage());
             e.printStackTrace();
@@ -180,7 +175,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
         // 7. 조표 인식
         RecognitionResult rcResult = recognition(analysisImage, normalizedStaves, analysisObjects);
         Mat recognitionImage = rcResult.getImage();
-        //List<int[]> beatPitch = rcResult.getBeatPitch();
+        beatPitch = rcResult.getBeatPitch();
         //System.out.println(beatPitch);
         System.out.println("key = " + rcResult.getKey());
 
@@ -193,23 +188,22 @@ public class OpenCVtestActivity extends AppCompatActivity {
 
          */
 
+        /*
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
         Bitmapimage = Bitmap.createBitmap(imageWithoutStaves.cols(), imageWithoutStaves.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(imageWithoutStaves, Bitmapimage);
 
-        // 비트맵 이미지 화면 출력
-        OpenCVtest.setImageBitmap(Bitmapimage);
+
+         */
 
     }
 
-    /*
-    public List<Object[]> getAnalysisObjects() {
-        return analysisObjects;
+    public List<int[]> getBeatPitchStat() {
+        return beatPitch;
     }
 
 
-     */
 
     // ---------------------------------------- funtions ------------------------------------------
 
@@ -554,6 +548,7 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 beats = (List<int[]>) result[1];
                 pitches = (List<int[]>) result[2];
 
+                /*
                 System.out.println("객체 확인");
                 for (int[] statArray : statList) {
                     System.out.print(Arrays.toString(statArray) + "객체 끝");
@@ -564,6 +559,8 @@ public class OpenCVtestActivity extends AppCompatActivity {
                 for (int[] pitchArray : pitches) {
                     System.out.println(Arrays.toString(pitchArray) + "계이름");
                 }
+
+                 */
 
 
                 if(!beats.isEmpty() && !pitches.isEmpty()){
@@ -587,14 +584,6 @@ public class OpenCVtestActivity extends AppCompatActivity {
             //put_text(image, String.valueOf(i), new Point(x, y - getWeighted(30)));
 
         }
-
-
-        System.out.println("므ㅝ지");
-        for (int[] list : beatPitch) {
-            System.out.println(Arrays.toString(list));
-        }
-
-
 
         return new RecognitionResult(image, key, beatPitch);
     }
