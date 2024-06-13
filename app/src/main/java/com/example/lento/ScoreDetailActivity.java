@@ -1,15 +1,15 @@
 package com.example.lento;
+
 import android.Manifest;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -18,26 +18,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.loader.content.CursorLoader;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +32,10 @@ import java.util.Locale;
 public class ScoreDetailActivity extends AppCompatActivity{
     private boolean isStarred = false; // 즐겨찾기 상태
     private ScoreAdapter adapter;
+    PdfRenderer renderer;
+    int display_page = 0;
     private static final int REQUEST_CODE = 1;
+    private ImageView sheetImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +104,7 @@ public class ScoreDetailActivity extends AppCompatActivity{
             //String imagePath = intent.getStringExtra("imagePath");
 
             // XML 레이아웃에서 뷰 찾기
-            ImageView sheetImage = findViewById(R.id.simage);
+            sheetImage = findViewById(R.id.simage);
             TextView sheetTitle = findViewById(R.id.stitle);
             TextView sheetComposer = findViewById(R.id.scomposer);
             TextView sheetPage = findViewById(R.id.pages);
@@ -138,32 +127,45 @@ public class ScoreDetailActivity extends AppCompatActivity{
             String format = formatDate(uploadDateString);
             sheetUploadDate.setText(format);
 
-            String imagePath = intent.getStringExtra("imagePath");
-            Log.d("ImagePathDebug", "imagePath: " + imagePath);
-
-            Uri imageUri = Uri.parse(imagePath);
-            Log.d("ImageUriDebug","imageUri: " + imageUri.toString());
-
-            // Glide를 사용하여 이미지 설정
-            Glide.with(this)
-                    .load(new File(imagePath)) // 이미지 경로 설정
-                    .error(R.drawable.scorelisttmp) // 이미지 로드 실패 시 대체할 이미지 설정
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            Log.e("GlideError", "Image loading failed", e);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            return false;
-                        }
-                    })
-                    .into(sheetImage);
-
             // 복원된 즐겨찾기 상태에 따라 아이콘 이미지 업데이트
             updateStarImage();
+        }
+
+
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+        } else {
+            loadImageFromIntent();
+        }
+
+    }
+
+
+
+    private void loadImageFromIntent() {
+        Intent intent = getIntent();
+        String imagePath = intent.getStringExtra("imagePath");
+        Uri imageUri = Uri.parse(imagePath);
+
+        Log.d("ImagePath", "imagePath: " + imagePath);
+        Log.d("ImageUri", "imageUri: " + imageUri.toString());
+
+        // 악보 이미지 출력
+        try {
+            ParcelFileDescriptor parcelFileDescriptor = getContentResolver()
+                    .openFileDescriptor(imageUri, "r");
+            renderer = new PdfRenderer(parcelFileDescriptor);
+            display_page = 0;
+            _display(display_page);
+        } catch(FileNotFoundException fnfe){
+
+        }catch (IOException e){
+
         }
     }
 
@@ -179,6 +181,7 @@ public class ScoreDetailActivity extends AppCompatActivity{
         starImageView.setImageResource(isStarred ? R.drawable.starfill : R.drawable.starstroke);
     }
 
+    // 업로드 날짜 오류 수정
     private String formatDate(String dateString) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); // 입력 문자열 형식
         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy/MM/dd"); // 원하는 출력 형식
@@ -192,5 +195,13 @@ public class ScoreDetailActivity extends AppCompatActivity{
 
         return outputFormat.format(date);
     }
-
+    private void _display(int _n) {
+        if(renderer != null) {
+            PdfRenderer.Page page = renderer.openPage(_n);
+            Bitmap mBitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+            page.render(mBitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+            sheetImage.setImageBitmap(mBitmap);
+            page.close();
+        }
+    }
 }
