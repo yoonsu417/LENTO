@@ -1,8 +1,16 @@
 package com.example.lento;
+import android.Manifest;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,20 +20,34 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.loader.content.CursorLoader;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class ScoreDetailActivity extends AppCompatActivity{
     private boolean isStarred = false; // 즐겨찾기 상태
+    private ScoreAdapter adapter;
+    private static final int REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +112,7 @@ public class ScoreDetailActivity extends AppCompatActivity{
         if (intent != null) {
             String title = intent.getStringExtra("title");
             String composer = intent.getStringExtra("composer");
-            String imagePath = intent.getStringExtra("imagePath");
+            //String imagePath = intent.getStringExtra("imagePath");
 
             // XML 레이아웃에서 뷰 찾기
             ImageView sheetImage = findViewById(R.id.simage);
@@ -112,11 +134,15 @@ public class ScoreDetailActivity extends AppCompatActivity{
             sheetPage.setText(scoreDetails.getPage()+ " 페이지");
             sheetGenre.setText(scoreDetails.getGenre());
             // 업로드 날짜 설정
-            Date currentDate = new Date();
-            SimpleDateFormat mFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
-            String formatDate = mFormat.format(currentDate);
-            sheetUploadDate.setText(formatDate);
-            //sheetUploadDate.setText(scoreDetails.getUploadDate());
+            String uploadDateString = scoreDetails.getUploadDate();
+            String format = formatDate(uploadDateString);
+            sheetUploadDate.setText(format);
+
+            String imagePath = intent.getStringExtra("imagePath");
+            Log.d("ImagePathDebug", "imagePath: " + imagePath);
+
+            Uri imageUri = Uri.parse(imagePath);
+            Log.d("ImageUriDebug","imageUri: " + imageUri.toString());
 
             // Glide를 사용하여 이미지 설정
             Glide.with(this)
@@ -135,10 +161,12 @@ public class ScoreDetailActivity extends AppCompatActivity{
                         }
                     })
                     .into(sheetImage);
+
             // 복원된 즐겨찾기 상태에 따라 아이콘 이미지 업데이트
             updateStarImage();
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -150,4 +178,19 @@ public class ScoreDetailActivity extends AppCompatActivity{
         ImageView starImageView = findViewById(R.id.star);
         starImageView.setImageResource(isStarred ? R.drawable.starfill : R.drawable.starstroke);
     }
+
+    private String formatDate(String dateString) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH); // 입력 문자열 형식
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy/MM/dd"); // 원하는 출력 형식
+
+        Date date = null;
+        try {
+            date = inputFormat.parse(dateString); // 문자열을 Date 객체로 변환
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return outputFormat.format(date);
+    }
+
 }
