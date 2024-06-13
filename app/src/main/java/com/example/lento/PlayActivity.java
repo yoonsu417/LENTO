@@ -3,12 +3,12 @@ package com.example.lento;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -160,6 +160,10 @@ public class PlayActivity extends AppCompatActivity {
                         iconPause.setVisibility(View.GONE);
                         // 녹음 파일 저장 등 추가 작업
                         saveRecording();
+
+                        // 화면 이동
+                        Intent intent = new Intent(PlayActivity.this, PerformAccuracyActivity.class);
+                        startActivity(intent);
                     }
                 })
                 .setNegativeButton("취소", null)
@@ -180,6 +184,11 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void saveRecording() {
+        if (pcmBuffer == null) {
+            Log.e(LOG_TAG, "PCM Buffer is null. Cannot save recording.");
+            return;
+        }
+
         // PCM 데이터를 WAV 파일로 저장
         try {
             byte[] pcmData = pcmBuffer.toByteArray();

@@ -1,28 +1,22 @@
 package com.example.lento;
+
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
 
-import java.io.File;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.io.IOException;
 import java.util.List;
 public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> {
@@ -49,7 +43,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
         holder.sheetComposer.setText(score.getComposer());
 
         // PDF 파일을 비트맵으로 변환하여 이미지뷰에 설정 -> 이건 ok
-        Log.d("PDF_LOAD", "PDF 파일 경로: " + score.getImagePath());
+        // Log.d("PDF_LOAD", "PDF 파일 경로: " + score.getImagePath());
 
         // PDF 파일을 비트맵으로 변환하여 이미지뷰에 설정
         try {
@@ -60,7 +54,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
 
             if (bitmap != null) {
                 holder.sheetImage.setImageBitmap(bitmap);
-                Log.d("PDF_LOAD", "비트맵 생성 및 이미지뷰 설정 완료");
+                //Log.d("PDF_LOAD", "비트맵 생성 및 이미지뷰 설정 완료");
             } else {
                 Log.e("PDF_LOAD", "비트맵 생성 실패");
                 // 이미지 로드 실패 시, placeholder 이미지 설정

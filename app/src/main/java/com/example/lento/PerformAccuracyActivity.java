@@ -3,7 +3,6 @@ package com.example.lento;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,8 +25,8 @@ public class PerformAccuracyActivity extends AppCompatActivity {
         back = (ImageView)findViewById(R.id.back);
 
 
-
         OpenCVtestActivity openCVtestActivity = new OpenCVtestActivity();
+        // 지금은 고향의 봄 악보로 고정
         openCVtestActivity.processImage(this, R.drawable.sheet);
 
         List<int[]> beatPitch = openCVtestActivity.getBeatPitchStat();
