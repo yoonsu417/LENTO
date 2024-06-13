@@ -190,11 +190,7 @@
 
 
         </HorizontalScrollView>
-        <Button
-            android:id="@+id/OpenCVtest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OpenCV Test" />
+
     </LinearLayout>
     </ScrollView>
     <include
