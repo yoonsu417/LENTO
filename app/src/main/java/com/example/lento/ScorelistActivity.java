@@ -89,10 +89,26 @@ public class ScorelistActivity extends AppCompatActivity {
         adapter = new ScoreAdapter(this, scoreList);
         recyclerView.setAdapter(adapter);
     }
+
     // 홈 클릭 시 실행되는 메서드
     public void onHomeClicked(View view) {
         // 홈 화면으로 이동하는 코드를 작성합니다.
         Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
+    public void onSheetClicked(View view) {
+        // 악보리스트 화면으로 이동하는 코드
+        Intent intent = new Intent(this, ScorelistActivity.class);
+        startActivity(intent);
+    }
+    public void onMypageClicked(View view) {
+        // 마이페이지 화면으로 이동하는 코드
+        Intent intent = new Intent(this, MypageActivity.class);
+        startActivity(intent);
+    }
+    public void onTheoryClicked(View view) {
+        // 음악이론 화면으로 이동하는 코드
+        Intent intent = new Intent(this, TheoryActivity.class); //음악이론 액티비티 추가하면 바꿀것.
         startActivity(intent);
     }
 }

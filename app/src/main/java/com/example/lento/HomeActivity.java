@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -62,6 +63,7 @@ public class HomeActivity extends Activity {
 
         Upload = (Button)findViewById(R.id.Upload);
 
+        /*
         // 악보인식 테스트용 버튼
         Button test;
         test = (Button)findViewById(R.id.OpenCVtest);
@@ -73,6 +75,7 @@ public class HomeActivity extends Activity {
             }
         });
 
+         */
 
         Upload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,6 +189,11 @@ public class HomeActivity extends Activity {
         }
     }
     // 홈 클릭 시 실행되는 메서드
+    public void onHomeClicked(View view) {
+        // 홈 화면으로 이동하는 코드를 작성합니다.
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
     public void onSheetClicked(View view) {
         // 악보리스트 화면으로 이동하는 코드
         Intent intent = new Intent(this, ScorelistActivity.class);
