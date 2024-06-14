@@ -92,9 +92,12 @@ public class MypageActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String userEmail = "";
 
+        CurrentUser user = (CurrentUser)getApplicationContext();
+        String set_user = user.getCurrentUser();
         // 사용자의 이메일을 가져오는 쿼리
-        String query = "SELECT EMAIL FROM USER";
+        String query = "SELECT EMAIL FROM USER WHERE EMAIL = '" + set_user + "'";
         Cursor cursor = db.rawQuery(query, null);
+
 
         // 쿼리 결과에서 첫 번째 행의 이메일 가져오기
         if (cursor.moveToFirst()) {
@@ -111,9 +114,12 @@ public class MypageActivity extends AppCompatActivity {
     private String getUserNameFromDB(String userEmail) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String userName = "";
+        CurrentUser user = (CurrentUser)getApplicationContext();
+        String set_user = user.getCurrentUser();
+        String query = "SELECT NAME FROM USER WHERE EMAIL = '" + set_user + "'";
 
         // 사용자의 이메일을 기반으로 사용자 이름을 가져오는 쿼리
-        String query = "SELECT NAME FROM USER WHERE EMAIL = '" + userEmail + "'";
+        //String query = "SELECT NAME FROM USER WHERE EMAIL = '" + userEmail + "'";
         Cursor cursor = db.rawQuery(query, null);
 
         // 쿼리 결과에서 사용자 이름을 가져오기
