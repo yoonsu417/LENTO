@@ -1,27 +1,55 @@
 package com.example.lento;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.graphics.pdf.PdfRenderer;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 
 public class HomeActivity extends Activity {
 
+    PdfRenderer renderer;
+    int display_page = 0;
     public static final int PICK_FILE = 99;
     SQLiteHelper dbHelper;
     SQLiteDatabase db;
+
+    ImageView recentPractice;
+    private TextView nameP, madeP, genreP, dateP, emptyMessage;
+    private LinearLayout songDetailsLayout;
+
+    private static final String SHARED_PREF_NAME = "practicePrefs";
+    private static final String KEY_IMAGE_PATH = "imagePath";
+    private static final String KEY_PRACTICE_DATE = "practiceDate";
+    private String imagePath;
+    private String practiceDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +113,63 @@ public class HomeActivity extends Activity {
             }
         });
 
+        /*
+        nameP = findViewById(R.id.nameP);
+        madeP = findViewById(R.id.madeP);
+        genreP = findViewById(R.id.genreP);
+
+         */
+        dateP = findViewById(R.id.dateP);
+        recentPractice = findViewById(R.id.recentPractice);
+        emptyMessage = findViewById(R.id.emptyMessage);
+        songDetailsLayout = findViewById(R.id.songDetailsLayout);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        imagePath = sharedPreferences.getString(KEY_IMAGE_PATH, null);
+        practiceDate = sharedPreferences.getString(KEY_PRACTICE_DATE, null);
+
+        dateP.setText(practiceDate);
+
+        if (imagePath != null && !imagePath.isEmpty()) {
+            emptyMessage.setVisibility(View.GONE); // "아직 연습한 곡이 없습니다." 메시지 숨기기
+            songDetailsLayout.setVisibility(View.VISIBLE); // 곡 세부 정보 보이기
+
+            Uri fileUri = Uri.parse(imagePath);
+
+            try {
+                ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(fileUri, "r");
+                renderer = new PdfRenderer(parcelFileDescriptor);
+                display_page = 0;
+                _display(display_page);
+            } catch (FileNotFoundException fnfe) {
+                fnfe.printStackTrace();
+                System.out.println("파일을 찾을 수 없습니다: " + fnfe.getMessage());
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("IO 예외 발생: " + e.getMessage());
+            }
+        } else {
+            emptyMessage.setVisibility(View.VISIBLE); // "아직 연습한 곡이 없습니다." 메시지 보이기
+            songDetailsLayout.setVisibility(View.GONE); // 곡 세부 정보 숨기기
+        }
+    }
+
+    private void _display(int _n) {
+        if(renderer != null) {
+            PdfRenderer.Page page = renderer.openPage(_n);
+            Bitmap mBitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+            page.render(mBitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+            recentPractice.setImageBitmap(mBitmap);
+            page.close();
+        }
+    }
+
+    protected void onPause() {
+        super.onPause();
 
     }
+
+
     // 데이터베이스에서 사용자 이름을 가져오는 메서드
     public String getUserName(String userEmail) {
         dbHelper = new SQLiteHelper(this);
@@ -107,6 +190,8 @@ public class HomeActivity extends Activity {
 
         return userName;
     }
+
+
     private String getUserNameFromDB() {
         String userName = "";
 
@@ -186,6 +271,7 @@ public class HomeActivity extends Activity {
             }
         }
     }
+
     // 홈 클릭 시 실행되는 메서드
     public void onHomeClicked(View view) {
         // 홈 화면으로 이동하는 코드를 작성합니다.
@@ -207,7 +293,6 @@ public class HomeActivity extends Activity {
         Intent intent = new Intent(this, TheoryActivity.class); //음악이론 액티비티 추가하면 바꿀것.
         startActivity(intent);
     }
-
 
 
 }

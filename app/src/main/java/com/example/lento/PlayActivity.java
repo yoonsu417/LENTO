@@ -27,6 +27,7 @@ import java.util.UUID;
 
 public class PlayActivity extends AppCompatActivity {
 
+
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private static final String LOG_TAG = "AudioRecordTest";
 
@@ -68,11 +69,13 @@ public class PlayActivity extends AppCompatActivity {
             }
         });
 
+        String imagePath = getIntent().getStringExtra("imagePath");
+
         // 정지 버튼 클릭 리스너 설정
         iconPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopRecording();
+                stopRecording(imagePath);
             }
         });
 
@@ -135,7 +138,7 @@ public class PlayActivity extends AppCompatActivity {
         iconPlay.setImageResource(R.drawable.play);
     }
 
-    private void stopRecording() {
+    private void stopRecording(String imagePath) {
         isRecording = false;
         if (audioRecord != null) {
             audioRecord.stop();
@@ -145,10 +148,10 @@ public class PlayActivity extends AppCompatActivity {
         recordingThread = null; // 녹음 중지 시 스레드도 null로 설정
 
         // 녹음 중지 시 경고창 표시
-        showStopWarning();
+        showStopWarning(imagePath);
     }
 
-    private void showStopWarning() {
+    private void showStopWarning(String imagePath) {
         new AlertDialog.Builder(this)
                 .setTitle("Warning")
                 .setMessage("연주를 마무리 하시겠습니까?")
@@ -163,6 +166,7 @@ public class PlayActivity extends AppCompatActivity {
 
                         // 화면 이동
                         Intent intent = new Intent(PlayActivity.this, PerformAccuracyActivity.class);
+                        intent.putExtra("imagePath", imagePath);
                         startActivity(intent);
                     }
                 })

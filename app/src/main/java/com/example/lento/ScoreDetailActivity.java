@@ -4,13 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,14 +39,7 @@ public class ScoreDetailActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreinfo);
-        Button practicebtn=findViewById(R.id.practiceBt);
-        practicebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent next2pIntent = new Intent(ScoreDetailActivity.this, PlayActivity.class);
-                startActivity(next2pIntent);
-            }
-        });
+
         //정확도 표 클릭시 상세페이지
         ImageView accuracy=findViewById(R.id.accuracy);
         accuracy.setOnClickListener(new View.OnClickListener() {
@@ -98,10 +89,10 @@ public class ScoreDetailActivity extends AppCompatActivity{
 
         // 인텐트에서 데이터 가져오기
         Intent intent = getIntent();
+        String imagePath = intent.getStringExtra("imagePath");
         if (intent != null) {
             String title = intent.getStringExtra("title");
             String composer = intent.getStringExtra("composer");
-            //String imagePath = intent.getStringExtra("imagePath");
 
             // XML 레이아웃에서 뷰 찾기
             sheetImage = findViewById(R.id.simage);
@@ -129,27 +120,37 @@ public class ScoreDetailActivity extends AppCompatActivity{
 
             // 복원된 즐겨찾기 상태에 따라 아이콘 이미지 업데이트
             updateStarImage();
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+            } else {
+                loadImageFromIntent(imagePath);
+
+            }
         }
 
+        Button practicebtn=findViewById(R.id.practiceBt);
+        practicebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 화면 이동
+                Intent next2pIntent = new Intent(ScoreDetailActivity.this, PlayActivity.class);
+                // 이미지 경로 가져가기
+                next2pIntent.putExtra("imagePath", imagePath);
+                startActivity(next2pIntent);
 
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
-        } else {
-            loadImageFromIntent();
-        }
+            }
+        });
 
     }
 
 
-
-    private void loadImageFromIntent() {
+    private void loadImageFromIntent(String imagePath) {
         Intent intent = getIntent();
-        String imagePath = intent.getStringExtra("imagePath");
         Uri imageUri = Uri.parse(imagePath);
 
         Log.d("ImagePath", "imagePath: " + imagePath);
