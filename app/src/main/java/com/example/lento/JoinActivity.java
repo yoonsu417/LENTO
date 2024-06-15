@@ -33,9 +33,6 @@ public class JoinActivity extends Activity {
         EditText email = (EditText)findViewById(R.id.CreateId2);
         EditText pw = (EditText)findViewById(R.id.CreatePw2);
         Button joinBt = (Button)findViewById(R.id.JoinBt);
-        Button backBt = (Button)findViewById(R.id.back_test);
-
-
         // 버튼 연동
         joinBt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -69,6 +66,8 @@ public class JoinActivity extends Activity {
                 }
             }
         });
+
+        /*
         backBt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(JoinActivity.this, MainActivity.class);
@@ -76,19 +75,20 @@ public class JoinActivity extends Activity {
             }
         });
 
+         */
+
         // 이미지 버튼 구현 미완으로 오류가 나서 우선 테스트 버튼(R.id.back_test)으로 대체했습니다. 추후 수정 부탁드려요! (_ _)
-        /*
+
 
         // 뒤로가기 클릭, 회원가입 -> 로그인 화면 이동
-        TextView back;
-        back = (TextView)findViewById(R.id.back);
+        ImageView back;
+        back = (ImageView) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 finish();
             }
         });
 
-         */
     }
 
 }
