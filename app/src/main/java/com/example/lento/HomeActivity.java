@@ -113,12 +113,9 @@ public class HomeActivity extends Activity {
             }
         });
 
-        /*
         nameP = findViewById(R.id.nameP);
         madeP = findViewById(R.id.madeP);
         genreP = findViewById(R.id.genreP);
-
-         */
         dateP = findViewById(R.id.dateP);
         recentPractice = findViewById(R.id.recentPractice);
         emptyMessage = findViewById(R.id.emptyMessage);
@@ -131,26 +128,32 @@ public class HomeActivity extends Activity {
         dateP.setText(practiceDate);
 
         if (imagePath != null && !imagePath.isEmpty()) {
-            emptyMessage.setVisibility(View.GONE); // "아직 연습한 곡이 없습니다." 메시지 숨기기
-            songDetailsLayout.setVisibility(View.VISIBLE); // 곡 세부 정보 보이기
+            emptyMessage.setVisibility(View.GONE);
+            songDetailsLayout.setVisibility(View.VISIBLE);
 
             Uri fileUri = Uri.parse(imagePath);
 
+            // 권한 재확인 및 파일 처리
             try {
+                getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(fileUri, "r");
                 renderer = new PdfRenderer(parcelFileDescriptor);
                 display_page = 0;
                 _display(display_page);
+                displayRecentDetails(imagePath);
             } catch (FileNotFoundException fnfe) {
                 fnfe.printStackTrace();
                 System.out.println("파일을 찾을 수 없습니다: " + fnfe.getMessage());
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("IO 예외 발생: " + e.getMessage());
+            } catch (SecurityException se) {
+                se.printStackTrace();
+                System.out.println("권한이 거부되었습니다: " + se.getMessage());
             }
         } else {
-            emptyMessage.setVisibility(View.VISIBLE); // "아직 연습한 곡이 없습니다." 메시지 보이기
-            songDetailsLayout.setVisibility(View.GONE); // 곡 세부 정보 숨기기
+            emptyMessage.setVisibility(View.VISIBLE);
+            songDetailsLayout.setVisibility(View.GONE);
         }
     }
 
@@ -167,6 +170,21 @@ public class HomeActivity extends Activity {
     protected void onPause() {
         super.onPause();
 
+    }
+
+    private void displayRecentDetails(String imagePath) {
+        DBManager dbManager = new DBManager(this);
+        Recent recent = dbManager.getRecentByImagePath(imagePath);
+
+        if (recent != null) {
+            nameP = findViewById(R.id.nameP);
+            madeP = findViewById(R.id.madeP);
+            genreP = findViewById(R.id.genreP);
+
+            nameP.setText(recent.getTitle());
+            madeP.setText(recent.getComposer());
+            genreP.setText(recent.getGenre());
+        }
     }
 
 
@@ -265,6 +283,9 @@ public class HomeActivity extends Activity {
         if(requestCode == PICK_FILE && resultCode == RESULT_OK) {
             if(data != null){
                 Uri uri = data.getData();
+
+                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                 Intent intent = new Intent(HomeActivity.this, UploadActivity.class);
                 intent.putExtra("fileUri", uri.toString());
                 startActivity(intent);
