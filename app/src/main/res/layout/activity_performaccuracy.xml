@@ -44,12 +44,16 @@
         android:layout_marginTop="8dp"
         android:textColor="#3E3E3E"
         android:textSize="20dp"/>
-    <ImageView
-        android:id="@+id/accscore"
-        android:background="@drawable/rounded_back"
-        android:layout_marginTop="25dp"
-        android:layout_width="360dp"
-        android:layout_height="500dp"
-        android:layout_gravity="center_horizontal"/>
 
+    <Button
+        android:id="@+id/homeButton"
+        android:text="홈으로"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="이미지 띄우는 거 때문에 임의로 홈으로 가는 버튼 만들어 뒀습니다 !!"/>
 </LinearLayout>

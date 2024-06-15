@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
         android:orientation="vertical">
 
 
@@ -39,7 +39,7 @@
                 android:fontFamily="@font/suite_medium"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="3dp"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textColor="#FFFFFF"/>
 
             <RelativeLayout
@@ -145,11 +145,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
                 android:text="악보 업로드"
                 android:textColor="#3E3E3E"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <Button
@@ -157,7 +157,6 @@
                 android:layout_width="300dp"
                 android:layout_height="160dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
                 android:background="@drawable/rounded_button_white"
                 android:drawableBottom="@drawable/plusadd1"
                 android:text="악보 이미지"
@@ -168,28 +167,157 @@
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginTop="25dp"
-            android:text="최근 연습한 곡"
-            android:textSize="18sp"
-            android:textColor="#3E3E3E"
-            android:textStyle="bold"/>
-
-        <HorizontalScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/practiceImage"
-                android:layout_width="50dp"
-                android:layout_height="50dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="13dp"
+                android:text="최근 연습한 곡"
+                android:textSize="16sp"
+                android:textColor="#3E3E3E"
+                android:textStyle="bold"/>
 
+            <TextView
+                android:id="@+id/emptyMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="아직 연습한 곡이 없습니다."
+                android:textSize="14sp"
+                android:textColor="#C6C6C6"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp" />
 
-        </HorizontalScrollView>
+            <LinearLayout
+                android:id="@+id/songDetailsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/recentPractice"
+                    android:src="@drawable/summer"
+                    android:layout_width="120dp"
+                    android:layout_height="150dp"
+                    android:layout_marginLeft="53dp"
+                    android:layout_marginTop="8dp"/>
+
+                <LinearLayout
+                    android:layout_width="250dp"
+                    android:layout_height="130dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:text="곡 이름:"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/nameP"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:background="@null"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:text="작곡가:"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/madeP"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:background="@null"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:text="장르:"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/genreP"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:background="@null"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:text="최근 연습 날짜:"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/dateP"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:background="@null"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
     </ScrollView>
