@@ -1,165 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/back"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="30dp"
-            android:text="뒤로가기"
-            android:textSize="15dp"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/back"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="30dp"
+                android:text="뒤로가기"
+                android:textSize="15dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/suite_semibold"
+                android:layout_marginTop="30dp"
+                android:text="챌린지 설정"
+                android:textColor="#3E3E3E"
+                android:textSize="25dp"/>
+        </RelativeLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="@font/suite_semibold"
-            android:layout_marginTop="30dp"
-            android:text="챌린지 설정"
-            android:textColor="#3E3E3E"
-            android:textSize="25dp"/>
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="40dp"
-        android:fontFamily="@font/suite_semibold"
-        android:textSize="20dp"
-        android:text="카테고리" />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/finishgoal"
-            android:layout_width="150dp"
-            android:layout_height="85dp"
             android:layout_marginLeft="50dp"
-            android:layout_marginTop="12dp"
-            android:text="# 완곡목표"
+            android:layout_marginTop="40dp"
             android:fontFamily="@font/suite_semibold"
-            android:paddingLeft="40dp"
-            android:paddingTop="40dp"
-            android:textColor="#FFFFFF"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:background="@drawable/rounded_chell1"/>
+            android:textSize="20dp"
+            android:text="카테고리" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/finishgoal"
+                android:layout_width="150dp"
+                android:layout_height="85dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="12dp"
+                android:text="# 완곡목표"
+                android:fontFamily="@font/suite_semibold"
+                android:paddingLeft="40dp"
+                android:paddingTop="40dp"
+                android:textColor="#FFFFFF"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:background="@drawable/rounded_chell1"/>
+            <Button
+                android:id="@+id/practicegoal"
+                android:layout_width="150dp"
+                android:layout_height="85dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="# 연습목표"
+                android:fontFamily="@font/suite_semibold"
+                android:paddingLeft="40dp"
+                android:paddingTop="40dp"
+                android:textColor="#FFFFFF"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:background="@drawable/rounded_chell2"/>
+
+
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="40dp"
+            android:fontFamily="@font/suite_semibold"
+            android:textSize="20dp"
+            android:text="내용" />
+
+        <EditText
+            android:id="@+id/chellname"
+            android:layout_width="320dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rounded_back"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="45dp"
+            android:paddingLeft="20dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="40dp"
+            android:fontFamily="@font/suite_semibold"
+            android:textSize="20dp"
+            android:text="기간 설정" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/sdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/suite_medium"
+                android:textSize="18dp"
+                android:text="시작일" />
+            <EditText
+                android:id="@+id/chellsdate"
+                android:layout_width="260dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/rounded_back"
+                android:layout_toRightOf="@id/sdate"
+                android:hint="YYYY-MM-DD"
+                android:textColorHint="#D8D8D8"
+                android:paddingLeft="20dp"
+                />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/fdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/suite_medium"
+                android:textSize="18dp"
+                android:text="종료일"
+                />
+            <EditText
+                android:id="@+id/chellfdate"
+                android:layout_width="260dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/rounded_back"
+                android:layout_toRightOf="@id/fdate"
+                android:hint="YYYY-MM-DD"
+                android:textColorHint="#D8D8D8"
+                android:paddingLeft="20dp"
+                />
+        </RelativeLayout>
+
         <Button
-            android:id="@+id/practicegoal"
-            android:layout_width="150dp"
-            android:layout_height="85dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:text="# 연습목표"
-            android:fontFamily="@font/suite_semibold"
-            android:paddingLeft="40dp"
-            android:paddingTop="40dp"
+            android:id="@+id/NextBt"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+            android:text="등록하기"
+            android:textSize="17sp"
             android:textColor="#FFFFFF"
-            android:textSize="18dp"
             android:textStyle="bold"
-            android:background="@drawable/rounded_chell2"/>
-
-
+            android:background="@drawable/rounded_button"
+            android:radius="15dp"/>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="40dp"
-        android:fontFamily="@font/suite_semibold"
-        android:textSize="20dp"
-        android:text="내용" />
-
-    <EditText
-        android:id="@+id/chellname"
-        android:layout_width="320dp"
-        android:layout_height="40dp"
-        android:background="@drawable/rounded_back"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="45dp"
-        android:paddingLeft="20dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="40dp"
-        android:fontFamily="@font/suite_semibold"
-        android:textSize="20dp"
-        android:text="기간 설정" />
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/sdate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/suite_medium"
-            android:textSize="18dp"
-            android:text="시작일" />
-        <EditText
-            android:id="@+id/chellsdate"
-            android:layout_width="260dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/rounded_back"
-            android:layout_toRightOf="@id/sdate"
-            android:hint="YYYY-MM-DD"
-            android:textColorHint="#D8D8D8"
-            android:paddingLeft="20dp"
-            />
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/fdate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/suite_medium"
-            android:textSize="18dp"
-            android:text="종료일"
-            />
-        <EditText
-            android:id="@+id/chellfdate"
-            android:layout_width="260dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/rounded_back"
-            android:layout_toRightOf="@id/fdate"
-            android:hint="YYYY-MM-DD"
-            android:textColorHint="#D8D8D8"
-            android:paddingLeft="20dp"
-            />
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/NextBt"
-        android:layout_width="350dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="100dp"
-        android:text="등록하기"
-        android:textSize="17sp"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:background="@drawable/rounded_button"
-        android:radius="15dp"/>
-
-</LinearLayout>
+</ScrollView>
