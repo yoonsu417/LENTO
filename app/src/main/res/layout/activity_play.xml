@@ -76,7 +76,7 @@
             android:id="@+id/scoreImage"
             android:layout_width="match_parent"
             android:layout_height="350dp"
-            android:src="@drawable/sample_test" />
+            android:src="@drawable/kohyang" />
 
         <View
             android:id="@+id/movingRectangle"

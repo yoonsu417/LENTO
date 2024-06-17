@@ -200,7 +200,7 @@ public class PlayActivity extends AppCompatActivity {
             writeWavHeader(out, pcmData.length);
             out.write(pcmData);
             out.close();
-            Toast.makeText(this, "녹음이 저장되었습니다: " + outputFile, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "녹음이 저장되었습니다: " + outputFile, Toast.LENGTH_LONG).show();
             Log.i(LOG_TAG, "녹음이 저장되었습니다: " + outputFile); // 로그 출력
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error saving WAV file", e);

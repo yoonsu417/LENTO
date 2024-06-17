@@ -21,6 +21,7 @@ public class PerformAccuracyActivity extends AppCompatActivity {
     ImageView back;
 
     Button goHome;
+    Button again;
     public static final String SHARED_PREF_NAME = "practicePrefs";
     public static final String KEY_IMAGE_PATH = "imagePath";
     public static final String KEY_PRACTICE_DATE = "practiceDate";
@@ -81,6 +82,14 @@ public class PerformAccuracyActivity extends AppCompatActivity {
                 Intent intent = new Intent(PerformAccuracyActivity.this, HomeActivity.class);
                 intent.putExtra("imagePath", imagePath);
                 intent.putExtra("practiceDate", practicedate);
+                startActivity(intent);
+            }
+        });
+        again = (Button)findViewById(R.id.again);
+        goHome.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(PerformAccuracyActivity.this, PlayActivity.class);
                 startActivity(intent);
             }
         });
