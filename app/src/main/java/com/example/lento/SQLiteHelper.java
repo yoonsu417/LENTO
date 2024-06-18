@@ -65,11 +65,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         // 연습 통계 DB
         db.execSQL("CREATE TABLE IF NOT EXISTS STATISTICS (" +
+                "USER_NAME TEXT NOT NULL," +
                 "SHEET_TITLE TEXT NOT NULL," +
-                "PRACTICE_DATE DATE NOT NULL," +
-                "PRACTICE_PRECISION INTEGER," +
-                "FEEDBACK_FILE TEXT," +
-                "PRIMARY KEY (SHEET_TITLE, PRACTICE_DATE)," +
+                "PRACTICE_COUNT INTEGER NOT NULL," +
+                "PRACTICE_PRECISION DOUBLE," +
+                "PRIMARY KEY (USER_NAME, SHEET_TITLE)," +
                 "FOREIGN KEY (SHEET_TITLE) REFERENCES SHEET (SHEET_TITLE)" +
                 "ON UPDATE CASCADE ON DELETE CASCADE);");
 

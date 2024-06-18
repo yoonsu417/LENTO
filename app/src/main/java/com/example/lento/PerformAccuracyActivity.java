@@ -1,6 +1,7 @@
 package com.example.lento;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,8 +32,9 @@ import ca.uol.aig.fftpack.RealDoubleFFT;
 
 public class PerformAccuracyActivity extends AppCompatActivity {
 
+    Context context;
     private SQLiteHelper dbHelper;
-    TextView date, accuracy;
+    TextView date, accuracy, errorText, accuracyUser;
     ImageView back;
     SQLiteDatabase db;
     Button goHome;
@@ -44,9 +46,11 @@ public class PerformAccuracyActivity extends AppCompatActivity {
     int scale2;
     ArrayList<Integer> playScale = new ArrayList<>();
     ArrayList<Integer> check = new ArrayList<>();
+    List<int[]> error = new ArrayList<>();
 
     // *** FFT 관련 ***
-    private static final String WAV_FILE_PATH = "/storage/emulated/0/Download/test.wav"; // test wav 파일 경로
+    private static String WAV_FILE_PATH=
+    "/storage/emulated/0/Download/test.wav"; // test wav 파일 경로
     // 피치에 따른 계이름 변환
     private static final int REQUEST_PERMISSION = 100;
     private static final int SAMPLE_RATE = 22050 ;
@@ -64,6 +68,12 @@ public class PerformAccuracyActivity extends AppCompatActivity {
         date = (TextView)findViewById(R.id.accuracyDate);
         back = (ImageView)findViewById(R.id.back);
         accuracy = (TextView)findViewById(R.id.accuracyPer);
+        errorText = (TextView)findViewById(R.id.errorText);
+        accuracyUser = (TextView)findViewById(R.id.accuracyUser);
+
+        // 녹음 경로
+        String singPath = getIntent().getStringExtra("singPath");
+        //WAV_FILE_PATH = singPath;
 
         // *** FFT 관련 ***
         // RealDoubleFFT 클래스 컨스트럭터는 한번에 처리할 샘플들의 수를 받는다. 그리고 출력될 주파수 범위들의 수를 나타낸다.
@@ -88,13 +98,10 @@ public class PerformAccuracyActivity extends AppCompatActivity {
             for (int[] list : beatPitch) {
                 System.out.println(Arrays.toString(list));
             }
-            MatchScale(beatPitch, playScale);
+            error = MatchScale(beatPitch, playScale);
         } else {
             Log.e("PerformAccuracyActivity", "beatPitch 리스트가 null입니다.");
         }
-
-        // 틀린 부분 체크 위한 출력
-        Log.d("Match", "총 check: " + check);
 
         // 오늘 날짜 출력
         Date currentDate = new Date();
@@ -111,12 +118,44 @@ public class PerformAccuracyActivity extends AppCompatActivity {
         String result = String.format("%.1f", accuracyPer);
         accuracy.setText("연주정확도 : " + result + "%");
 
+
         // 이미지 경로 및 연습한 날짜 저장
         String imagePath = getIntent().getStringExtra("imagePath");
         String practicedate = formatDate;
 
         RecentPractice recentPractice = new RecentPractice(this);
         recentPractice.saveDB(imagePath,practicedate,result);
+
+        // 틀린 부분 체크 위한 출력
+        Log.d("Match", "총 check: " + check);
+
+        String user = recentPractice.getUserNameFromDB();
+        accuracyUser.setText(user + "님의 연주");
+
+        int count = 0;
+        String fail= " ";
+        String correctPitch = " ";
+
+        StringBuilder errorMessage = new StringBuilder();
+        if(!error.isEmpty()){
+            for (int[] a : error) {
+                count = a[0];
+                fail = getPitch(a[1]);
+                correctPitch = getPitch(a[2]);
+
+                errorMessage.append(count)
+                        .append("번 째의 음표가 틀렸어요 \n")
+                        .append(correctPitch)
+                        .append("을(를) 쳐야하는데, ")
+                        .append(fail)
+                        .append("을(를) 쳤네요.\n\n");
+            }
+
+            errorText.setText(errorMessage.toString());
+        } else {
+            errorText.setText("정확하게 연주했어요 !!!");
+        }
+
 
         goHome = (Button)findViewById(R.id.homeButton);
         goHome.setOnClickListener(new View.OnClickListener(){
@@ -303,7 +342,7 @@ public class PerformAccuracyActivity extends AppCompatActivity {
         return scale2;
     }
 
-    public void MatchScale(List<int[]> beatPitch, ArrayList<Integer> playScale) {
+    public List<int[]> MatchScale(List<int[]> beatPitch, ArrayList<Integer> playScale) {
         playScale.removeAll(Arrays.asList(Integer.valueOf(0)));
         int i = 0;
         int s = 0;
@@ -321,6 +360,11 @@ public class PerformAccuracyActivity extends AppCompatActivity {
                         if(s == i) {
                             Log.d("Match", "X. pitch: " + list[1] + ", 내 연주 : " + playScale.get(s-1));
                             check.add(currentBeatPitch);
+                            int[] errorList = new int[3];
+                            errorList[0] = currentBeatPitch;
+                            errorList[1] = playScale.get(s-1);
+                            errorList[2] = list[1];
+                            error.add(errorList);
                             break;
                         }
                         // 음 일치하면 체크하지 않고 나오기
@@ -340,6 +384,11 @@ public class PerformAccuracyActivity extends AppCompatActivity {
                         if(s == i) {
                             Log.d("Match", "X. pitch: " + list[1] + ", 내 연주 : " + playScale.get(s-1));
                             check.add(currentBeatPitch);
+                            int[] errorList = new int[3];
+                            errorList[0] = currentBeatPitch;
+                            errorList[1] = playScale.get(s-1);
+                            errorList[2] = list[1];
+                            error.add(errorList);
                             break;
                         }
                         // 음 일치하면 체크하지 않고 나오기
@@ -359,6 +408,11 @@ public class PerformAccuracyActivity extends AppCompatActivity {
                         if(s == i) {
                             Log.d("Match", "X. pitch: " + list[1] + ", 내 연주 : " + playScale.get(s-1));
                             check.add(currentBeatPitch);
+                            int[] errorList = new int[3];
+                            errorList[0] = currentBeatPitch;
+                            errorList[1] = playScale.get(s-1);
+                            errorList[2] = list[1];
+                            error.add(errorList);
                             break;
                         }
                         // 음 일치하면 체크하지 않고 나오기
@@ -378,6 +432,11 @@ public class PerformAccuracyActivity extends AppCompatActivity {
                         if(s == i) {
                             Log.d("Match", "X. pitch: " + list[1] + ", 내 연주 : " + playScale.get(s-1));
                             check.add(currentBeatPitch);
+                            int[] errorList = new int[3];
+                            errorList[0] = currentBeatPitch;
+                            errorList[1] = playScale.get(s-1);
+                            errorList[2] = list[1];
+                            error.add(errorList);
                             break;
                         }
                         // 음 일치하면 체크하지 않고 나오기
@@ -390,6 +449,42 @@ public class PerformAccuracyActivity extends AppCompatActivity {
                     break;
                 default : break;
             }
+        }
+        return error;
+    }
+
+    public static String getPitch(int pitch){
+        switch (pitch){
+            case 6:
+                return "도";
+            case 7:
+                return "레";
+            case 8:
+                return "미";
+            case 9:
+                return "파";
+            case 10:
+                return "솔";
+            case 11:
+                return "라";
+            case 12:
+                return "시";
+            case 13:
+                return "높은 도";
+            case 14:
+                return "높은 레";
+            case 15:
+                return "높은 미";
+            case 16:
+                return "높은 파";
+            case 17:
+                return "높은 솔";
+            case 18:
+                return "높은 라";
+            case 19:
+                return "높은 시";
+            default:
+                return " ";
         }
     }
 

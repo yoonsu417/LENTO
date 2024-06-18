@@ -1,87 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <RelativeLayout
+    android:layout_height="match_parent">
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/back"
-            android:layout_marginTop="38dp"
-            android:layout_marginLeft="30dp"
-            android:text="뒤로가기"
-            android:textSize="15dp"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/back"
+                android:layout_marginTop="38dp"
+                android:layout_marginLeft="30dp"
+                android:text="뒤로가기"
+                android:textSize="15dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="연주 정확도"
+                android:textColor="#3E3E3E"
+                android:textStyle="bold"
+                android:textSize="25dp"/>
+        </RelativeLayout>
         <TextView
+            android:id="@+id/accuracyDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:text="연주 정확도"
-            android:textColor="#3E3E3E"
-            android:textStyle="bold"
-            android:textSize="25dp"/>
-    </RelativeLayout>
-    <TextView
-        android:id="@+id/accuracyDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2024.05.20"
-        android:fontFamily="@font/suite_bold"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="30dp"
-        android:textColor="#3E3E3E"
-        android:textSize="20dp"/>
-
-    <TextView
-        android:id="@+id/accuracyPer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/suite_regular"
-        android:text="연주 정확도 : 87%"
-        android:textColor="#3E3E3E"
-        android:textSize="20dp" />
-    <ImageView
-        android:layout_marginTop="12dp"
-        android:layout_width="match_parent"
-        android:layout_height="415sp"
-        android:src="@drawable/kohyangscore"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="12sp"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/homeButton"
-            android:background="@drawable/rounded_button"
-            android:text="홈으로"
-            android:textColor="#ffffff"
-            android:textStyle="bold"
-            android:layout_marginLeft="38sp"
-            android:textSize="15sp"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"/>
-        <Button
-            android:id="@+id/again"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
+            android:text="2024.05.20"
+            android:fontFamily="@font/suite_bold"
             android:layout_marginLeft="30dp"
-            android:gravity="center"
-            android:text="다시 연주"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/rounded_button_gray"/>
+            android:layout_marginTop="30dp"
+            android:textColor="#3E3E3E"
+            android:textSize="20dp"/>
 
+        <TextView
+            android:id="@+id/accuracyPer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/suite_regular"
+            android:text="연주 정확도 : 87%"
+            android:layout_marginBottom="15dp"
+            android:textStyle="bold"
+            android:textColor="#3E3E3E"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/accuracyUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/suite_regular"
+            android:text="~~님의 연주"
+            android:textColor="#3E3E3E"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/suite_regular"
+            android:text="~를 쳐야하는데 !를 쳤어요."
+            android:textColor="#3E3E3E"
+            android:textSize="18dp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="315sp"
+            android:src="@drawable/kohyangscore"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
+            <Button
+
+                android:id="@+id/homeButton"
+                android:background="@drawable/rounded_button"
+                android:text="홈으로"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:layout_marginLeft="35sp"
+                android:textSize="15sp"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"/>
+            <Button
+                android:layout_gravity="center_vertical"
+                android:id="@+id/again"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="25dp"
+                android:gravity="center"
+                android:text="다시 연주"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/rounded_button_gray"/>
+
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+
+</ScrollView>

@@ -207,8 +207,6 @@ public class HomeActivity extends Activity {
                 cursor.close();
             }
         }
-
-        System.out.println("클래스 출력" + recent.getAccuracy());
         return recent;
     }
 

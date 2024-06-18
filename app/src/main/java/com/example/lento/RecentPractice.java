@@ -62,7 +62,7 @@ public class RecentPractice {
         cursor.close();
     }
 
-    private String getUserNameFromDB() {
+    public String getUserNameFromDB() {
         String userName = "";
 
         // 데이터베이스에서 사용자 이름을 가져오는 쿼리
