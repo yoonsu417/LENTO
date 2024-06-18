@@ -41,7 +41,7 @@ public class ScoreDetailActivity extends AppCompatActivity{
         setContentView(R.layout.activity_scoreinfo);
 
         //정확도 표 클릭시 상세페이지
-        ImageView accuracy=findViewById(R.id.accuracy);
+        ImageView accuracy=findViewById(R.id.accuracyPer);
         accuracy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

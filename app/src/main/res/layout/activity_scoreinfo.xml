@@ -175,7 +175,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp">
         <ImageView
-            android:id="@+id/accuracy"
+            android:id="@+id/accuracyPer"
             android:layout_width="500dp"
             android:layout_height="100dp"
             android:src="@drawable/chart"></ImageView>

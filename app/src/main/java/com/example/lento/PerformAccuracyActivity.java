@@ -38,7 +38,7 @@ import ca.uol.aig.fftpack.RealDoubleFFT;
 public class PerformAccuracyActivity extends AppCompatActivity {
 
     private SQLiteHelper dbHelper;
-    TextView date;
+    TextView date, accuracy;
     ImageView back;
     SQLiteDatabase db;
     Button goHome;
@@ -47,7 +47,7 @@ public class PerformAccuracyActivity extends AppCompatActivity {
     public static final String KEY_IMAGE_PATH = "imagePath";
     public static final String KEY_PRACTICE_DATE = "practiceDate";
 
-    int scale2 ;
+    int scale2;
     ArrayList<Integer> playScale = new ArrayList<>();
     ArrayList<Integer> check = new ArrayList<>();
 
@@ -69,13 +69,13 @@ public class PerformAccuracyActivity extends AppCompatActivity {
 
         date = (TextView)findViewById(R.id.accuracyDate);
         back = (ImageView)findViewById(R.id.back);
+        accuracy = (TextView)findViewById(R.id.accuracyPer);
 
-
+        // *** FFT 관련 ***
         // RealDoubleFFT 클래스 컨스트럭터는 한번에 처리할 샘플들의 수를 받는다. 그리고 출력될 주파수 범위들의 수를 나타낸다.
         // FFT 변환을 위한 초기화
         transformer = new RealDoubleFFT(SAMPLE_RATE);
 
-        // *** FFT 관련 ***
         // test 권한 추가
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
@@ -108,6 +108,13 @@ public class PerformAccuracyActivity extends AppCompatActivity {
         String formatDate = mFormat.format(currentDate);
 
         date.setText(formatDate);
+
+        // 정확도 계산
+        int accuracyPer = 0;
+        double total = beatPitch.toArray().length;
+        double correct = total - check.toArray().length;
+        accuracyPer = (int)(correct / total * 100);
+        accuracy.setText("연주정확도 : " + accuracyPer + "%");
 
         // 페이지 뒤로 가기
         back.setOnClickListener(new View.OnClickListener() {

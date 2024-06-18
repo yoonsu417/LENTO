@@ -35,15 +35,17 @@
         android:layout_marginTop="30dp"
         android:textColor="#3E3E3E"
         android:textSize="20dp"/>
+
     <TextView
+        android:id="@+id/accuracyPer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="연주 정확도 : 87%"
-        android:fontFamily="@font/suite_regular"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/suite_regular"
+        android:text="연주 정확도 : 87%"
         android:textColor="#3E3E3E"
-        android:textSize="20dp"/>
+        android:textSize="20dp" />
     <ImageView
         android:layout_marginTop="12dp"
         android:layout_width="match_parent"
