@@ -1,34 +1,25 @@
 package com.example.lento;
 
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.util.Pair;
-import android.widget.ImageView;
 import android.util.Log;
-
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import android.util.Pair;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Core;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class OpenCVtestActivity {
@@ -95,40 +86,42 @@ public class OpenCVtestActivity {
         Pair<Mat, List<int[]>> result = removeStaves(binaryImage);
         Mat imageWithoutStaves = result.first;
         List<int[]> stavesInfo = result.second;
-
+        /*
         System.out.println("오선 좌표");
         for (int[] stave : stavesInfo) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
             System.out.println(Arrays.toString(stave));
         }
-
+         */
 
         // 4. 정규화
         Pair<Mat, List<double[]>> normalizedResult = normalization(imageWithoutStaves, stavesInfo, 10); // 오선 간격 10 픽셀
         Mat normalizedImage = normalizedResult.first;
         List<double[]> normalizedStaves = normalizedResult.second;
-
+        /*
         System.out.println("정규화 후 오선 좌표");
         for (double[] stave : normalizedStaves) { // 오선 좌표 제대로 가져오는지 확인 (Logcat)
-            System.out.print(Arrays.toString(stave) + ", ");
+            System.out.println(Arrays.toString(stave));
         }
+         */
 
 
         // 5. 객체 검출
         Pair<Mat, List<Object[]>> detect = objectDetection(normalizedImage, normalizedStaves);
         Mat detectionImage = detect.first;
         List<Object[]> detectionObjects = detect.second;
+        /*
         System.out.println("객체 검출 후"); // 확인 용도 (Logcat)
         for (Object[] obj : detectionObjects) {
             System.out.print("[" + obj[0] + ", ");
             int[] intArray = (int[]) obj[1];
             System.out.println(Arrays.toString(intArray) + "]");
         }
-
-
+         */
         // 6. 객체 분석
         Pair<Mat, List<Object[]>> analysis = objectAnalysis(detectionImage, detectionObjects);
         Mat analysisImage = analysis.first;
         List<Object[]> analysisObjects = analysis.second;
+        /*
         System.out.println("객체 분석 후"); //확인 용도(Logcat)
         System.out.println("방향 포함 출력"); // 확인 용도 (Logcat)
         for (Object[] obj : analysisObjects) {
@@ -171,30 +164,25 @@ public class OpenCVtestActivity {
             }
 
         }
+         */
 
         // 7. 조표 인식
         RecognitionResult rcResult = recognition(analysisImage, normalizedStaves, analysisObjects);
         Mat recognitionImage = rcResult.getImage();
         beatPitch = rcResult.getBeatPitch();
         //System.out.println(beatPitch);
-        System.out.println("key = " + rcResult.getKey());
+        //System.out.println("key = " + rcResult.getKey());
 
-        /*
         System.out.println("박자, 계이름 출력");
         for (int[] list : beatPitch) {
             System.out.println(Arrays.toString(list));
         }
-
-
-         */
 
         /*
         // 비트맵 선언 + Mat 객체 -> 비트맵 변환
         Bitmap Bitmapimage;
         Bitmapimage = Bitmap.createBitmap(imageWithoutStaves.cols(), imageWithoutStaves.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(imageWithoutStaves, Bitmapimage);
-
-
          */
 
     }
@@ -647,7 +635,7 @@ public class OpenCVtestActivity {
         boolean noteCondition = (
                 !stems.isEmpty() &&
                         w >= getWeighted(12) &&  // 넓이 조건
-                        h >= getWeighted(30) &&  // 높이 조건
+                        h >= getWeighted(35) &&  // 높이 조건
                         area >= getWeighted(120)  // 픽셀 갯수 조건
         );
 
@@ -757,9 +745,9 @@ public class OpenCVtestActivity {
             headCenter = 0;
         }
 
-        //put_text(image, String.valueOf(headCenter), new Point(x, y + h+ getWeighted(80)));
-
         return new NoteHeadResult(headExist, headFill, headCenter);
+
+        //put_text(image, String.valueOf(headCenter), new Point(x, y + h+ getWeighted(80)));
 
     }
 
@@ -772,17 +760,17 @@ public class OpenCVtestActivity {
         int top, bottom, col;
 
         if (direction) {  // 정 방향 음표
-            top = y;  // 음표 꼬리를 탐색할 위치 (상단)
-            bottom = y + h - getWeighted(20);  // 음표 꼬리를 탐색할 위치 (하단)
+            top = y;
+            bottom = y + h - getWeighted(20);
         } else {  // 역 방향 음표
-            top = y + getWeighted(15);  // 음표 꼬리를 탐색할 위치 (상단)
-            bottom = y + h;  // 음표 꼬리를 탐색할 위치 (하단)
+            top = y + getWeighted(15);
+            bottom = y + h;
         }
 
         if (i != 0) {
             col = x - getWeighted(4);  // 음표 꼬리를 탐색할 위치 (열)
         } else {
-            col = x + w + getWeighted(4);  // 음표 꼬리를 탐색할 위치 (열)
+            col = x + w + getWeighted(4);
         }
 
         if (i>0){
