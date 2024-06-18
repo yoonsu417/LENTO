@@ -734,7 +734,7 @@ public class OpenCVtestActivity {
         boolean headExist = (cnt >= 3 && pixelCnt >= 50);
         boolean headFill;
         if(direction){
-            headFill = (cnt >= 8 && cntMax >= 9 && pixelCnt > 149);
+            headFill = (cnt >= 8 && cntMax >= 9 && pixelCnt > 150);
         } else{
             headFill = (cnt >= 8 && cntMax >= 9 && pixelCnt > 115);
         }
