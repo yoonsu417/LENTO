@@ -1,13 +1,9 @@
 package com.example.lento;
 
 import android.Manifest;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.media.AudioFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,8 +26,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
-// *** FFT 관련 ***
 import ca.uol.aig.fftpack.RealDoubleFFT;
 
 
@@ -110,11 +104,12 @@ public class PerformAccuracyActivity extends AppCompatActivity {
         date.setText(formatDate);
 
         // 정확도 계산
-        int accuracyPer = 0;
+        double accuracyPer = 0;
         double total = beatPitch.toArray().length;
         double correct = total - check.toArray().length;
-        accuracyPer = (int)(correct / total * 100);
-        accuracy.setText("연주정확도 : " + accuracyPer + "%");
+        accuracyPer = (correct / total * 100);
+        String result = String.format("%.1f", accuracyPer);
+        accuracy.setText("연주정확도 : " + result + "%");
 
         // 페이지 뒤로 가기
         back.setOnClickListener(new View.OnClickListener() {
