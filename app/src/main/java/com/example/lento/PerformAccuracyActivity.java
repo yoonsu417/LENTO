@@ -297,11 +297,12 @@ public class PerformAccuracyActivity extends AppCompatActivity {
         }
 
          */
-        else{   }
+        else{    }
         return scale2;
     }
 
     public void MatchScale(List<int[]> beatPitch, ArrayList<Integer> playScale) {
+        playScale.removeAll(Arrays.asList(Integer.valueOf(0)));
         int i = 0;
         int s = 0;
         int currentBeatPitch = 0;
