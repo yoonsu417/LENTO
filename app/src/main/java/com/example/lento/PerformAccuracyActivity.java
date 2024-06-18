@@ -133,7 +133,7 @@ public class PerformAccuracyActivity extends AppCompatActivity {
             }
         });
         again = (Button)findViewById(R.id.again);
-        goHome.setOnClickListener(new View.OnClickListener(){
+        again.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(PerformAccuracyActivity.this, PlayActivity.class);
