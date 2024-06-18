@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -145,15 +146,15 @@ public class PerformAccuracyActivity extends AppCompatActivity {
 
                 errorMessage.append(count)
                         .append("번 째의 음표가 틀렸어요 \n")
-                        .append(correctPitch)
-                        .append("을(를) 쳐야하는데, ")
-                        .append(fail)
+                        .append('"' + correctPitch + '"')
+                        .append("을(를) 쳐야 하는데, ")
+                        .append('"' + fail + '"')
                         .append("을(를) 쳤네요.\n\n");
             }
 
             errorText.setText(errorMessage.toString());
         } else {
-            errorText.setText("정확하게 연주했어요 !!!");
+            errorText.setText("정확하게 연주했어요 !!");
         }
 
 
