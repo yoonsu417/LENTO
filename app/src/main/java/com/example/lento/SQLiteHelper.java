@@ -14,9 +14,10 @@ import java.util.List;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "LENTO.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String DELETE_TABLE_ALL = "DROP TABLE IF EXISTS USER";
+    public static final String DELETE_TABLE_PRACTICE = "DROP TABLE IF EXISTS PRACTICE";
 
     public SQLiteHelper (@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -71,11 +72,25 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "PRIMARY KEY (SHEET_TITLE, PRACTICE_DATE)," +
                 "FOREIGN KEY (SHEET_TITLE) REFERENCES SHEET (SHEET_TITLE)" +
                 "ON UPDATE CASCADE ON DELETE CASCADE);");
+
+        // 최근 연습한 악보 DB
+        db.execSQL("CREATE TABLE IF NOT EXISTS PRACTICE (" +
+                "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "USER_NAME TEXT NOT NULL," +
+                "IMAGE_PATH TEXT," +
+                "PRACTICE_DATE TEXT," +
+                "TITLE TEXT," +
+                "COMPOSER TEXT," +
+                "GENRE TEXT," +
+                "FOREIGN KEY (USER_NAME) REFERENCES USER (NAME)" +
+                "ON UPDATE CASCADE ON DELETE CASCADE);");
+
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // DB 삭제 후 재생성 구문 (용이한 테스트 위해 미리 짜둠)
         db.execSQL(DELETE_TABLE_ALL);
+        db.execSQL(DELETE_TABLE_PRACTICE);
         onCreate(db);
     }
 

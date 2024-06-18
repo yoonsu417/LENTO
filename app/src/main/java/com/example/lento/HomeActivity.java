@@ -1,11 +1,7 @@
 package com.example.lento;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -13,14 +9,12 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.pdf.PdfRenderer;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -28,7 +22,6 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -44,12 +37,7 @@ public class HomeActivity extends Activity {
     ImageView recentPractice;
     private TextView nameP, madeP, genreP, dateP, emptyMessage;
     private LinearLayout songDetailsLayout;
-
-    private static final String SHARED_PREF_NAME = "practicePrefs";
-    private static final String KEY_IMAGE_PATH = "imagePath";
-    private static final String KEY_PRACTICE_DATE = "practiceDate";
-    private String imagePath;
-    private String practiceDate;
+    private RecentPractice practiceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,40 +109,49 @@ public class HomeActivity extends Activity {
         emptyMessage = findViewById(R.id.emptyMessage);
         songDetailsLayout = findViewById(R.id.songDetailsLayout);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        imagePath = sharedPreferences.getString(KEY_IMAGE_PATH, null);
-        practiceDate = sharedPreferences.getString(KEY_PRACTICE_DATE, null);
+        practiceManager = new RecentPractice(this);
+        Recent recent = getRecentPracticeImagePath();
 
-        dateP.setText(practiceDate);
+        if(recent != null){
+            nameP.setText(recent.getTitle());
+            madeP.setText(recent.getComposer());
+            genreP.setText(recent.getGenre());
+            dateP.setText(recent.getRecentDate());
 
-        if (imagePath != null && !imagePath.isEmpty()) {
-            emptyMessage.setVisibility(View.GONE);
-            songDetailsLayout.setVisibility(View.VISIBLE);
+            String imagePath = recent.getImagePath();
+            if (imagePath != null && !imagePath.isEmpty()) {
+                emptyMessage.setVisibility(View.GONE);
+                songDetailsLayout.setVisibility(View.VISIBLE);
 
-            Uri fileUri = Uri.parse(imagePath);
-
-            // 권한 재확인 및 파일 처리
-            try {
-                getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(fileUri, "r");
-                renderer = new PdfRenderer(parcelFileDescriptor);
-                display_page = 0;
-                _display(display_page);
-                displayRecentDetails(imagePath);
-            } catch (FileNotFoundException fnfe) {
-                fnfe.printStackTrace();
-                System.out.println("파일을 찾을 수 없습니다: " + fnfe.getMessage());
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("IO 예외 발생: " + e.getMessage());
-            } catch (SecurityException se) {
-                se.printStackTrace();
-                System.out.println("권한이 거부되었습니다: " + se.getMessage());
+                Uri fileUri = Uri.parse(imagePath);
+                try {
+                    getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(fileUri, "r");
+                    renderer = new PdfRenderer(parcelFileDescriptor);
+                    display_page = 0;
+                    _display(display_page);
+                } catch (FileNotFoundException fnfe) {
+                    fnfe.printStackTrace();
+                    System.out.println("파일을 찾을 수 없습니다: " + fnfe.getMessage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("IO 예외 발생: " + e.getMessage());
+                } catch (SecurityException se) {
+                    se.printStackTrace();
+                    System.out.println("권한이 거부되었습니다: " + se.getMessage());
+                }
+            } else {
+                emptyMessage.setVisibility(View.VISIBLE);
+                songDetailsLayout.setVisibility(View.GONE);
             }
         } else {
             emptyMessage.setVisibility(View.VISIBLE);
             songDetailsLayout.setVisibility(View.GONE);
+            Log.d("RecentPractice", "최근 연습한 악보가 없습니다.");
         }
+
+
+
     }
 
     private void _display(int _n) {
@@ -167,24 +164,48 @@ public class HomeActivity extends Activity {
         }
     }
 
-    protected void onPause() {
-        super.onPause();
+    // 최근 연습한 악보 가져오기
+    private Recent getRecentPracticeImagePath() {
+        Recent recent = null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String userName = getUserNameFromDB();
+        Log.d("함수 안", "Querying recent practice for user: " + userName);
 
-    }
+        String query = "SELECT PRACTICE.ID, USER.NAME, PRACTICE.IMAGE_PATH, PRACTICE.PRACTICE_DATE, " +
+                "PRACTICE.TITLE, PRACTICE.COMPOSER, PRACTICE.GENRE " +
+                "FROM PRACTICE " +
+                "INNER JOIN USER ON PRACTICE.USER_NAME = USER.NAME " +
+                "WHERE USER.NAME = ? " +
+                "ORDER BY PRACTICE.ID DESC LIMIT 1";
+        Cursor cursor = null;
 
-    private void displayRecentDetails(String imagePath) {
-        DBManager dbManager = new DBManager(this);
-        Recent recent = dbManager.getRecentByImagePath(imagePath);
 
-        if (recent != null) {
-            nameP = findViewById(R.id.nameP);
-            madeP = findViewById(R.id.madeP);
-            genreP = findViewById(R.id.genreP);
+        try {
+            cursor = db.rawQuery(query, new String[]{userName});
+            if (cursor.moveToFirst()) {
+                // 데이터베이스에서 가져온 정보를 Recent 객체에 저장
+                String imagePath = cursor.getString(2);
+                String genre = cursor.getString(3);
+                String practiceDate = cursor.getString(4);
+                String title = cursor.getString(5);
+                String composer = cursor.getString(6);
 
-            nameP.setText(recent.getTitle());
-            madeP.setText(recent.getComposer());
-            genreP.setText(recent.getGenre());
+
+
+                Log.d("try 문 안", "Fetched recent practice: imagePath: " + imagePath + ", practiceDate: " + practiceDate + ", title: " + title + ", composer: " + composer + ", genre: " + genre);
+                recent = new Recent(userName, imagePath, practiceDate, title, composer, genre);
+            } else {
+                Log.d("else문 안", "No recent practice found for user: " + userName);
+            }
+        } catch (Exception e) {
+            Log.e("RecentPractice", "Error querying recent practice information: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
+
+        return recent;
     }
 
 
@@ -292,6 +313,8 @@ public class HomeActivity extends Activity {
             }
         }
     }
+
+
 
     // 홈 클릭 시 실행되는 메서드
     public void onHomeClicked(View view) {

@@ -102,25 +102,5 @@ public class DBManager {
         return scoreDetails;
     }
 
-    public Recent getRecentByImagePath(String imagePath) {
-        SQLiteDatabase db = new SQLiteHelper(context).getReadableDatabase();
-        Recent recent = null;
-
-        String query = "SELECT SHEET_TITLE, COMPOSER, GENRE, UPLOAD_DATE FROM SHEET WHERE SHEET_FILE = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{imagePath});
-
-        if (cursor.moveToFirst()) {
-            String title = cursor.getString(cursor.getColumnIndex("SHEET_TITLE"));
-            String composer = cursor.getString(cursor.getColumnIndex("COMPOSER"));
-            String genre = cursor.getString(cursor.getColumnIndex("GENRE"));
-
-            recent = new Recent(imagePath, title, composer, genre);
-        }
-
-        cursor.close();
-        db.close();
-
-        return recent;
-    }
 
 }
