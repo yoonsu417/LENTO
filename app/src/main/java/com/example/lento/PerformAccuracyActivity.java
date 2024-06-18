@@ -111,20 +111,12 @@ public class PerformAccuracyActivity extends AppCompatActivity {
         String result = String.format("%.1f", accuracyPer);
         accuracy.setText("연주정확도 : " + result + "%");
 
-        // 페이지 뒤로 가기
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
         // 이미지 경로 및 연습한 날짜 저장
         String imagePath = getIntent().getStringExtra("imagePath");
         String practicedate = formatDate;
 
         RecentPractice recentPractice = new RecentPractice(this);
-        recentPractice.saveDB(imagePath,practicedate);
+        recentPractice.saveDB(imagePath,practicedate,result);
 
         goHome = (Button)findViewById(R.id.homeButton);
         goHome.setOnClickListener(new View.OnClickListener(){
@@ -140,6 +132,14 @@ public class PerformAccuracyActivity extends AppCompatActivity {
             public void onClick(View v){
                 Intent intent = new Intent(PerformAccuracyActivity.this, PlayActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        // 페이지 뒤로 가기
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
     }

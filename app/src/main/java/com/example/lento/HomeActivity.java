@@ -35,7 +35,7 @@ public class HomeActivity extends Activity {
     SQLiteDatabase db;
 
     ImageView recentPractice;
-    private TextView nameP, madeP, genreP, dateP, emptyMessage;
+    private TextView nameP, madeP, genreP, dateP, accuracyP, emptyMessage;
     private LinearLayout songDetailsLayout;
     private RecentPractice practiceManager;
 
@@ -105,6 +105,7 @@ public class HomeActivity extends Activity {
         madeP = findViewById(R.id.madeP);
         genreP = findViewById(R.id.genreP);
         dateP = findViewById(R.id.dateP);
+        accuracyP = findViewById(R.id.accuracyP);
         recentPractice = findViewById(R.id.recentPractice);
         emptyMessage = findViewById(R.id.emptyMessage);
         songDetailsLayout = findViewById(R.id.songDetailsLayout);
@@ -117,6 +118,7 @@ public class HomeActivity extends Activity {
             madeP.setText(recent.getComposer());
             genreP.setText(recent.getGenre());
             dateP.setText(recent.getRecentDate());
+            accuracyP.setText(recent.getAccuracy());
 
             String imagePath = recent.getImagePath();
             if (imagePath != null && !imagePath.isEmpty()) {
@@ -172,7 +174,7 @@ public class HomeActivity extends Activity {
         Log.d("함수 안", "Querying recent practice for user: " + userName);
 
         String query = "SELECT PRACTICE.ID, USER.NAME, PRACTICE.IMAGE_PATH, PRACTICE.PRACTICE_DATE, " +
-                "PRACTICE.TITLE, PRACTICE.COMPOSER, PRACTICE.GENRE " +
+                "PRACTICE.TITLE, PRACTICE.COMPOSER, PRACTICE.GENRE, PRACTICE.ACCURACY " +
                 "FROM PRACTICE " +
                 "INNER JOIN USER ON PRACTICE.USER_NAME = USER.NAME " +
                 "WHERE USER.NAME = ? " +
@@ -189,11 +191,12 @@ public class HomeActivity extends Activity {
                 String practiceDate = cursor.getString(4);
                 String title = cursor.getString(5);
                 String composer = cursor.getString(6);
+                String accuracy = cursor.getString(7);
 
 
 
-                Log.d("try 문 안", "Fetched recent practice: imagePath: " + imagePath + ", practiceDate: " + practiceDate + ", title: " + title + ", composer: " + composer + ", genre: " + genre);
-                recent = new Recent(userName, imagePath, practiceDate, title, composer, genre);
+                Log.d("try 문 안", "Fetched recent practice: imagePath: " + imagePath + ", practiceDate: " + practiceDate + ", title: " + title + ", composer: " + composer + ", genre: " + genre + ", 정확도: " + accuracy);
+                recent = new Recent(userName, imagePath, practiceDate, title, composer, genre, accuracy);
             } else {
                 Log.d("else문 안", "No recent practice found for user: " + userName);
             }
@@ -205,6 +208,7 @@ public class HomeActivity extends Activity {
             }
         }
 
+        System.out.println("클래스 출력" + recent.getAccuracy());
         return recent;
     }
 

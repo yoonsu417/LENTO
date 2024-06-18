@@ -14,7 +14,7 @@ import java.util.List;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "LENTO.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public static final String DELETE_TABLE_ALL = "DROP TABLE IF EXISTS USER";
     public static final String DELETE_TABLE_PRACTICE = "DROP TABLE IF EXISTS PRACTICE";
@@ -82,6 +82,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "TITLE TEXT," +
                 "COMPOSER TEXT," +
                 "GENRE TEXT," +
+                "ACCURACY TEXT," +
                 "FOREIGN KEY (USER_NAME) REFERENCES USER (NAME)" +
                 "ON UPDATE CASCADE ON DELETE CASCADE);");
 

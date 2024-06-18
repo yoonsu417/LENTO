@@ -18,7 +18,7 @@ public class RecentPractice {
         db = dbHelper.getWritableDatabase();
     }
 
-    public void saveDB(String imagePath, String practicedate) {
+    public void saveDB(String imagePath, String practicedate, String result) {
 
         String userName;
         userName = getUserNameFromDB();
@@ -47,12 +47,13 @@ public class RecentPractice {
             values.put("TITLE", title);
             values.put("COMPOSER", composer);
             values.put("GENRE", genre);
+            values.put("ACCURACY", result);
 
             long rowId = db.insert("PRACTICE", null, values);
 
             // 예시로 제목, 작곡가, 장르, 이미지 경로 및 연습 날짜를 출력
             System.out.println("Title: " + title + ", Composer: " + composer + ", Genre: " + genre);
-            System.out.println("Image Path: " + imagePath + ", Practice Date: " + practicedate);
+            System.out.println("Image Path: " + imagePath + ", Practice Date: " + practicedate + " Accuracy" + result);
         } else {
             // 해당 imagePath에 대한 레코드가 없을 경우 처리
             Log.d("RecentPractice", "No matching sheet found for the given imagePath.");
