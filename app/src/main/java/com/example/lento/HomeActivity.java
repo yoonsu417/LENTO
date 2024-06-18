@@ -118,7 +118,7 @@ public class HomeActivity extends Activity {
             madeP.setText(recent.getComposer());
             genreP.setText(recent.getGenre());
             dateP.setText(recent.getRecentDate());
-            accuracyP.setText(recent.getAccuracy());
+            accuracyP.setText(recent.getAccuracy() + "%");
 
             String imagePath = recent.getImagePath();
             if (imagePath != null && !imagePath.isEmpty()) {
